@@ -21,6 +21,7 @@ public class World extends JPanel implements ActionListener, MouseListener {
 
     public World() {
         addKeyListener(new TAdapter());
+        addMouseListener(this);
         setFocusable(true);
         setBackground(Color.BLACK);
         movers.add(new Mover(48, 48));
@@ -68,6 +69,8 @@ public class World extends JPanel implements ActionListener, MouseListener {
     public void tick(){
         movers.get(0).input(keys);
         movers.get(0).tick();
+
+        level.tick();
     }
 
     @Override
@@ -92,9 +95,9 @@ public class World extends JPanel implements ActionListener, MouseListener {
     @Override
     public void mouseClicked(MouseEvent event) {
         if (SwingUtilities.isLeftMouseButton(event)) {
-            System.out.println("Left");
+            level.leftClick(event);
         } else if (SwingUtilities.isRightMouseButton(event)) {
-            System.out.println("Right");
+            level.rightClick(event);
         }
     }
 

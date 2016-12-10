@@ -2,6 +2,7 @@ package Normal;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 /**
@@ -15,9 +16,8 @@ public class Mover extends Entity {
     Sound s;
 
     public Mover(int x, int y) {
-        sprite = new Sprite("player", 32);
-        size = new Dimension(sprite.getWidth(), sprite.getHeight());
-        position = new Position(x, y);
+        super(new Sprite("player", 32), new Position(x, y));
+        setDirection(Direction.EAST);
         s = new Sound();
         s.loadSound("Wavewave");
         s.play();
@@ -51,12 +51,18 @@ public class Mover extends Entity {
     }
 
     @Override
-    public void click() {
+    public void step() {
 
     }
 
     @Override
+    public void click(MouseEvent event) {
+
+    }
+
+
+    @Override
     public void draw(Graphics g) {
-        DrawFunctions.drawImage(g, getImage(), getX(), getY(), scaleX, scaleY, direction);
+        DrawFunctions.drawImage(g, getImage(), getX(), getY(), scaleX, scaleY, direction.toRad());
     }
 }

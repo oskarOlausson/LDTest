@@ -13,7 +13,6 @@ public class Frame extends JFrame {
         world = new World();
 
         add(world);
-        addMouseListener(world);
         initUI();
     }
 

@@ -6,6 +6,7 @@
 package Normal.placable;
 
 import Normal.Entity;
+import Normal.Sprite;
 
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -13,6 +14,10 @@ import java.util.Collection;
 public class Mover extends Placable {
 
     private static final int MOVE_AMOUNT = 1;
+
+    public Mover() {
+        super(new Sprite("player", 32));
+    }
 
     @Override
     public void sense(Collection<Entity> sensed) {
@@ -23,6 +28,11 @@ public class Mover extends Placable {
 
     @Override
     public void tick() {
+
+    }
+
+    @Override
+    public void step() {
 
     }
 

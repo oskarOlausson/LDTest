@@ -22,7 +22,21 @@ public abstract class Entity {
     protected double dx = 0;
     protected double dy = 0;
 
+    public Entity(Sprite sprite, Position position) {
+        this.sprite = sprite;
+        this.position = position;
+    }
+
+    public Entity(Sprite sprite) {
+        this.sprite = sprite;
+        this.position = new Position(0, 0);
+        this.size = new Dimension(sprite.getWidth(), sprite.getHeight());
+    }
+
+
     public abstract void tick();
+
+    public abstract void step();
 
     public abstract void click(MouseEvent event);
 
@@ -87,6 +101,8 @@ public abstract class Entity {
     }
 
     public void draw(Graphics g) {
-        DrawFunctions.drawImage(g, sprite.getImage(), getX(), getY(), scaleX, scaleY, direction.toRad());
+        if (sprite != null) {
+            DrawFunctions.drawImage(g, sprite.getImage(), getX(), getY(), scaleX, scaleY, direction.toRad());
+        }
     }
 }

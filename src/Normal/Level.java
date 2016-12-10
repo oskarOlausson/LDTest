@@ -4,8 +4,10 @@ package Normal;
 import JSON.JsonParser;
 import JSON.Tileset;
 import JSON.Wrapper;
+import Normal.mail.Letter;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +17,13 @@ import java.util.List;
  */
 public class Level {
 
+    private static final int TICKS_PER_STEP = 30;
+
     private int[][] levelData;
     private Wrapper wrapper;
     private List<Tile> tiles = new ArrayList<>();
+    private List<Entity> entities = new ArrayList<>();
+    private int tickCounter = 0;
 
     public Level(String path) {
         JsonParser t = new JsonParser();
@@ -41,11 +47,34 @@ public class Level {
             }
 
         }
+
+        entities.add(new Letter());
+    }
+
+    public void tick() {
+        entities.forEach(Entity::tick);
+
+        tickCounter++;
+        if (tickCounter > TICKS_PER_STEP) {
+            step();
+            tickCounter = 0;
+        }
+    }
+
+    public void step() {
+        entities.forEach(Entity::step);
     }
 
     public void draw(Graphics g) {
-        for(Tile t: tiles) {
-            t.draw(g);
-        }
+        tiles.forEach(tile -> tile.draw(g));
+        entities.forEach(entity -> entity.draw(g));
+    }
+
+    public void leftClick(MouseEvent event) {
+        entities.add(new Mover(event.getX(), event.getY()));
+    }
+
+    public void rightClick(MouseEvent event) {
+
     }
 }
