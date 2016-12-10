@@ -2,12 +2,12 @@ package Normal;
 
 import Normal.mail.Letter;
 import Normal.mail.Mail;
-import Normal.placable.Mover;
 import Normal.placable.Placable;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 
@@ -20,6 +20,7 @@ public class Tile extends Entity {
     private Set<Mail> newOnTop = new HashSet<>();
     private List<Placable> placed = new ArrayList<>();
     private HashMap<Direction, Tile> neighbours = new HashMap<>();
+    private Class<? extends Placable> type;
 
 
     public Tile(BufferedImage image, int x, int y, int width, int height) {
@@ -52,9 +53,23 @@ public class Tile extends Entity {
         newOnTop.clear();
     }
 
+    public void setPlacableType(Class<? extends Placable> type) {
+        this.type = type;
+    }
+
     @Override
     public void click(MouseEvent event) {
-        placed.add(new Mover(position.getDrawX()+(int)size.getWidth()/2, position.getDrawY()+(int)size.getHeight()/2));
+        try {
+            placed.add(type.getDeclaredConstructor(int.class, int.class).newInstance(position.getDrawX()+(int)size.getWidth()/2, position.getDrawY()+(int)size.getHeight()/2));
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

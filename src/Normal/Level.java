@@ -49,7 +49,7 @@ public class Level {
             }
         }
         linkTilesWithNeighours();
-        hud = new HUD();
+        hud = new HUD(Constants.WIDTH.value-HUD.WIDTH, 0);
     }
 
     private void linkTilesWithNeighours() {
@@ -126,6 +126,7 @@ public class Level {
         int gridX = event.getX()/50;
         int gridY = event.getY()/50;
         if (levelData[gridX][gridY] != null) {
+            levelData[gridX][gridY].setPlacableType(hud.selected());
             levelData[gridX][gridY].click(event);
         }
 
