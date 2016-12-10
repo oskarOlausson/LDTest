@@ -46,6 +46,6 @@ public class SmallBox extends Mail {
 
     @Override
     public void draw(Graphics g) {
-        DrawFunctions.drawImage(g, getImage(), animation.getDrawX(), animation.getDrawY(), 1, 1, direction.toRad());
+        DrawFunctions.drawImage(g, getImage(), position.getDrawX(), position.getDrawY(), 1, 1, direction.toRad());
     }
 }

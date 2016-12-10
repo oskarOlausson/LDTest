@@ -19,7 +19,21 @@ public class Tile extends Entity {
     private List<Mail> onTop = new ArrayList<>();
     private List<Placable> placed = new ArrayList<>();
     private HashMap<Direction, Tile> neighbours = new HashMap<>();
+    private boolean special = false;
+    private boolean ingoing = false;
+    private Timer timer;
 
+    public Tile(BufferedImage image, int x, int y, int width, int height, boolean ingoing) {
+        super(new Sprite(image), new Position(x, y), new Dimension(width, height));
+        special = true;
+
+        if (ingoing) {
+            this.ingoing = true;
+            timer = new Timer(5);
+        }
+
+
+    }
 
     public Tile(BufferedImage image, int x, int y, int width, int height) {
         super(new Sprite(image), new Position(x, y), new Dimension(width, height));
@@ -28,10 +42,27 @@ public class Tile extends Entity {
     @Override
     public void tick() {
         placed.forEach(Placable::tick);
+        onTop.forEach(Mail::tick);
     }
 
     @Override
     public void step() {
+
+        if (special) {
+            if (neighbours.get(Direction.NORTH) != null)        direction = Direction.NORTH;
+            else if (neighbours.get(Direction.WEST) != null)    direction = Direction.WEST;
+            else if (neighbours.get(Direction.SOUTH) != null)   direction = Direction.SOUTH;
+            else if (neighbours.get(Direction.EAST) != null)    direction = Direction.EAST;
+        }
+
+        if (ingoing) {
+            timer.update();
+            if (timer.isDone()) {
+                onTop.add(new Letter(getX(), getY(), true));
+                timer.restart();
+            }
+        }
+
         List<Mail> toRemove = new ArrayList<>();
         for (Placable placable : placed) {
             placable.sense(onTop, toRemove::add);
@@ -44,13 +75,19 @@ public class Tile extends Entity {
 
     @Override
     public void click(MouseEvent event) {
-        placed.add(new Mover(position.getDrawX()+(int)size.getWidth()/2, position.getDrawY()+(int)size.getHeight()/2));
+        if (!special) placed.add(new Mover(position.getDrawX()+(int)size.getWidth()/2, position.getDrawY()+(int)size.getHeight()/2));
     }
 
     @Override
     public void draw(Graphics g) {
         g.drawImage(getImage(), position.getDrawX(), position.getDrawY(), null);
+    }
+
+    public void drawPlaced(Graphics g) {
         placed.forEach(entity -> entity.draw(g));
+    }
+
+    public void drawOnTop(Graphics g) {
         onTop.forEach(entity -> entity.draw(g));
     }
 
