@@ -19,7 +19,7 @@ public class Position {
     }
 
     public double distanceToPosition(Position p) {
-        return Math.sqrt(Math.pow(p.getX() - getX(), 2) - Math.pow(p.getY() - getY(), 2));
+        return Math.sqrt(Math.pow(p.getX() - getX(), 2) + Math.pow(p.getY() - getY(), 2));
     }
 
     public double getX() {

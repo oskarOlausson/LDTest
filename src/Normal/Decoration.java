@@ -7,12 +7,12 @@ package Normal;
 
 import java.awt.*;
 
-public class Wall {
+public class Decoration {
     private Image image;
     private int x;
     private int y;
 
-    public Wall(Image image, int x, int y) {
+    public Decoration(Image image, int x, int y) {
         this.image = image;
         this.x = x;
         this.y = y;

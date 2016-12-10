@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class Mover extends Placable {
+public class Mover extends Placeable {
 
     private static final int MOVE_AMOUNT = 50;
 

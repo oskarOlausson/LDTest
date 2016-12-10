@@ -4,6 +4,7 @@ package Normal;
 import JSON.JsonParser;
 import JSON.Tileset;
 import JSON.Wrapper;
+import Normal.hud.HUD;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -19,9 +20,11 @@ public class Level {
 
     private Tile[][] levelData;
     private Wrapper wrapper;
+    private HUD hud;
     private List<Tile> tiles = new ArrayList<>();
     private List<Entity> entities = new ArrayList<>();
-    private List<Wall> decor = new ArrayList<>();
+    private List<Decoration> decor = new ArrayList<>();
+
     private int tickCounter = 0;
     private Entity latest = null;
 
@@ -55,9 +58,29 @@ public class Level {
                 yy += 1;
             }
         }
-        for (xx = 0; xx < levelData.length; xx++) {
+        linkTilesWithNeighours();
+        l = wrapper.getLayer(0);
+        data = l.getData();
+
+        xx = 0;
+        yy = 0;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != 0) {
+                decor.add(new Decoration(ts.getImage(data[i]), (int) ((xx) * ts.getTileWidth()), (int) ((yy) * ts.getTileHeight())));
+            }
+            xx+=1;
+            if (xx >= w) {
+                xx = 0;
+                yy += 1;
+            }
+        }
+        hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0);
+    }
+
+    private void linkTilesWithNeighours() {
+        for (int xx = 0; xx < levelData.length; xx++) {
             Tile[] tileRow = levelData[xx];
-            for (yy = 0; yy < tileRow.length; yy++) {
+            for (int yy = 0; yy < tileRow.length; yy++) {
                 Tile tile = tileRow[yy];
                 if (tile != null) {
                     addNeighbours(levelData, xx, yy);
@@ -67,27 +90,9 @@ public class Level {
                 }
             }
         }
-
-        l = wrapper.getLayer(0);
-        data = l.getData();
-
-        xx = 0;
-        yy = 0;
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] != 0) {
-                decor.add(new Wall(ts.getImage(data[i]), (int) ((xx) * ts.getTileWidth()), (int) ((yy) * ts.getTileHeight())));
-            }
-            xx+=1;
-            if (xx >= w) {
-                xx = 0;
-                yy += 1;
-            }
-        }
     }
 
     public void tick() {
-        entities.forEach(Entity::tick);
-
         for (Tile[] tileRow : levelData) {
             for (Tile tile : tileRow) {
                 if (tile != null) {
@@ -101,13 +106,23 @@ public class Level {
             step();
             tickCounter = 0;
         }
+
+        hud.tick();
     }
 
     public void step() {
+
         for (Tile[] tileRow : levelData) {
             for (Tile tile : tileRow) {
                 if (tile != null) {
                     tile.step();
+                }
+            }
+        }
+        for (Tile[] tileRow : levelData) {
+            for (Tile tile : tileRow) {
+                if (tile != null) {
+                    tile.stepFinished();
                 }
             }
         }
@@ -125,11 +140,14 @@ public class Level {
                 }
             }
         }
+
         decor.forEach(wall -> wall.draw(g));
         entities.forEach(entity -> entity.draw(g));
+        hud.draw(g);
+
     }
 
-    private void forEachTile(Tile[][] levelData, Consumer<Tile> todo) {
+    private void forEachTile(Consumer<Tile> todo) {
         for (Tile[] tileRow : levelData) {
             for (Tile tile : tileRow) {
                 if (tile != null) {
@@ -143,22 +161,32 @@ public class Level {
         Entity now;
         int gridX = event.getX()/50;
         int gridY = event.getY()/50;
-        if (levelData[gridX][gridY] != null) {
+        boolean inBounds;
+        inBounds = (gridX < levelData.length);
+
+        if (inBounds && levelData[gridX][gridY] != null) {
+
+            levelData[gridX][gridY].setPlacableType(hud.selected());
             now = levelData[gridX][gridY].click(event);
 
-            if (latest != null) {
+        if (latest != null && now != null) {
+
                 if (now.getPosition().distanceToPosition(latest.getPosition()) < 60) {
                     if (Math.abs(now.getX() - latest.getX()) > Math.abs(now.getY() - latest.getY())) {
                         if (latest.getX() < now.getX()) latest.setDirection(Direction.EAST);
                         else latest.setDirection(Direction.WEST);
                     } else {
-                        if (latest.getY() < now.getY()) latest.setDirection(Direction.NORTH);
-                        else latest.setDirection(Direction.SOUTH);
+                        if (latest.getY() < now.getY()) latest.setDirection(Direction.SOUTH);
+                        else latest.setDirection(Direction.NORTH);
                     }
+                    now.setDirection(latest.direction);
                 }
             }
             latest = now;
+
         }
+
+        hud.click(event);
     }
 
     public void rightClick(MouseEvent event) {

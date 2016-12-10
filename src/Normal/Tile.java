@@ -2,12 +2,12 @@ package Normal;
 
 import Normal.mail.Letter;
 import Normal.mail.Mail;
-import Normal.placable.Mover;
-import Normal.placable.Placable;
+import Normal.placable.Placeable;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 
@@ -16,12 +16,16 @@ import java.util.List;
  * This classes has some inputs and outputs
  */
 public class Tile extends Entity {
-    private List<Mail> onTop = new ArrayList<>();
-    private List<Placable> placed = new ArrayList<>();
+    private Set<Mail> onTop = new HashSet<>();
+    private Set<Mail> newOnTop = new HashSet<>();
+    private Map<Class<? extends Placeable>, Placeable> placed = new HashMap<>();
     private HashMap<Direction, Tile> neighbours = new HashMap<>();
     private boolean special = false;
     private boolean ingoing = false;
     private Timer timer;
+
+
+    private Class<? extends Placeable> type;
 
     public Tile(BufferedImage image, int x, int y, int width, int height, boolean ingoing) {
         super(new Sprite(image, 50, 50), new Position(x, y), new Dimension(width, height));
@@ -43,7 +47,7 @@ public class Tile extends Entity {
 
     @Override
     public void tick() {
-        placed.forEach(Placable::tick);
+        placed.forEach((type, placeable) -> placeable.tick());
         onTop.forEach(Mail::tick);
     }
 
@@ -77,14 +81,19 @@ public class Tile extends Entity {
         }
 
         List<Mail> toRemove = new ArrayList<>();
-        for (Placable placable : placed) {
+        for (Placeable placable : placed.values()) {
             placable.sense(onTop, this, toRemove::add);
         }
         toRemove.forEach((mail) -> {
             onTop.remove(mail);
-            neighbours.get(mail.getDirection()).addMail(mail);
+
+            Tile neighbour = neighbours.get(mail.getDirection());
+            if (neighbour != null) {
+                neighbour.addMail(mail);
+            }
         });
     }
+
 
     public HashMap<Direction, Tile> getNeighbours() {
         return neighbours;
@@ -93,9 +102,34 @@ public class Tile extends Entity {
     @Override
     public Entity click(MouseEvent event) {
         if (!special) {
-            Mover mover = new Mover(position.getDrawX(), position.getDrawY());
-            placed.add(mover);
-            return mover;
+            Placeable p = createPlacable();
+            placed.put(type, p);
+            return p;
+        }
+        return null;
+    }
+
+
+    public void stepFinished() {
+        onTop.addAll(newOnTop);
+        newOnTop.clear();
+    }
+
+    public void setPlacableType(Class<? extends Placeable> type) {
+        this.type = type;
+    }
+
+    private Placeable createPlacable() {
+        try {
+            return type.getDeclaredConstructor(int.class, int.class).newInstance(position.getDrawX(), position.getDrawY());
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -106,7 +140,7 @@ public class Tile extends Entity {
     }
 
     public void drawPlaced(Graphics g) {
-        placed.forEach(entity -> entity.draw(g));
+        placed.forEach((type, entity) -> entity.draw(g));
     }
 
     public void drawOnTop(Graphics g) {
@@ -117,7 +151,7 @@ public class Tile extends Entity {
     }
 
     public void addMail(Mail mail) {
-        onTop.add(mail);
+        newOnTop.add(mail);
     }
 
     public void addLetter(MouseEvent event) {

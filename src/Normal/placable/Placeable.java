@@ -11,17 +11,17 @@ import Normal.mail.Mail;
 import java.util.Collection;
 import java.util.HashMap;
 
-public abstract class Placable extends Entity {
+public abstract class Placeable extends Entity {
 
     public interface MailRemovedListener {
         void mailRemoved(Mail mail);
     }
 
-    public Placable(Sprite sprite, Position position) {
+    public Placeable(Sprite sprite, Position position) {
         super(sprite, position);
     }
 
-    public Placable(Sprite sprite) {
+    public Placeable(Sprite sprite) {
         super(sprite);
     }
 

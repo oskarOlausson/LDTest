@@ -6,12 +6,13 @@ package Normal;
  */
 public enum Constants {
 
-    WIDTH (800), //height of screen
+    WIDTH (850), //height of screen
     HEIGHT (600), //width of screen
     SECOND (60), //how many ticks in one second
+    HUD_WIDTH (50),
     TICKS_PER_STEP(30);
 
-    int value;
+    public int value;
     Constants(int value) {
         this.value = value;
     }
