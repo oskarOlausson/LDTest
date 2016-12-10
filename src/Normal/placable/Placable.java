@@ -21,5 +21,5 @@ public abstract class Placable extends Entity {
         super(sprite);
     }
 
-    public abstract void sense(Collection<Entity> sensed);
+    public abstract void sense(Collection<? extends Entity> sensed);
 }

@@ -4,12 +4,12 @@ package Normal;
 import JSON.JsonParser;
 import JSON.Tileset;
 import JSON.Wrapper;
-import Normal.mail.Letter;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Created by oskar on 2016-12-07.
@@ -17,9 +17,7 @@ import java.util.List;
  */
 public class Level {
 
-    private static final int TICKS_PER_STEP = 30;
-
-    private int[][] levelData;
+    private Tile[][] levelData;
     private Wrapper wrapper;
     private List<Tile> tiles = new ArrayList<>();
     private List<Entity> entities = new ArrayList<>();
@@ -33,48 +31,105 @@ public class Level {
         int w = l.getWidth();
         int h = l.getHeight();
         int[] data = l.getData();
-        levelData = new int[w][h];
+        levelData = new Tile[w][h];
 
         int xx = 0;
         int yy = 0;
         for (int i = 0; i < data.length; i++) {
-            levelData[xx][yy] = data[i];
-            tiles.add(new Tile(ts.getImage(levelData[xx][yy]), xx * ts.getTileWidth(), yy * ts.getTileHeight()));
+            if (data[i] == 0) {
+                levelData[xx][yy] = null;
+            } else {
+                levelData[xx][yy] = new Tile(ts.getImage(data[i]), xx * ts.getTileWidth(), yy * ts.getTileHeight(), ts.getTileWidth(), ts.getTileHeight());
+            }
             xx+=1;
             if (xx >= w) {
                 xx = 0;
                 yy += 1;
             }
-
         }
-
-        entities.add(new Letter());
+        for (xx = 0; xx < levelData.length; xx++) {
+            Tile[] tileRow = levelData[xx];
+            for (yy = 0; yy < tileRow.length; yy++) {
+                Tile tile = tileRow[yy];
+                if (tile != null) {
+                    addNeighbours(levelData, xx, yy);
+                }
+            }
+        }
     }
 
     public void tick() {
         entities.forEach(Entity::tick);
 
         tickCounter++;
-        if (tickCounter > TICKS_PER_STEP) {
+        if (tickCounter > Constants.TICKS_PER_STEP.value) {
             step();
             tickCounter = 0;
         }
     }
 
     public void step() {
-        entities.forEach(Entity::step);
+        for (Tile[] tileRow : levelData) {
+            for (Tile tile : tileRow) {
+                if (tile != null) {
+                    tile.step();
+                }
+            }
+        }
     }
 
     public void draw(Graphics g) {
-        tiles.forEach(tile -> tile.draw(g));
+        for (Tile[] tileRow : levelData) {
+            for (Tile tile : tileRow) {
+                if (tile != null) {
+                    tile.draw(g);
+                }
+            }
+        }
         entities.forEach(entity -> entity.draw(g));
     }
 
+    private void forEachTile(Tile[][] levelData, Consumer<Tile> todo) {
+        for (Tile[] tileRow : levelData) {
+            for (Tile tile : tileRow) {
+                if (tile != null) {
+                    todo.accept(tile);
+                }
+            }
+        }
+    }
+
     public void leftClick(MouseEvent event) {
-        entities.add(new Mover(event.getX(), event.getY()));
+        int gridX = event.getX()/50;
+        int gridY = event.getY()/50;
+        if (levelData[gridX][gridY] != null) {
+            levelData[gridX][gridY].click(event);
+        }
     }
 
     public void rightClick(MouseEvent event) {
+        int gridX = event.getX()/50;
+        int gridY = event.getY()/50;
+        if (levelData[gridX][gridY] != null) {
+            levelData[gridX][gridY].addLetter(event);
+        }
+    }
 
+    private void addNeighbours(Tile[][] levelData, int xx, int yy) {
+        if (yy-1 >= 0 && levelData[xx][yy-1] != null) {
+            levelData[xx][yy].addNeighbours(Direction.NORTH, levelData[xx][yy-1]);
+
+        }
+        if (xx+1 < levelData.length && levelData[xx+1][yy] != null) {
+            levelData[xx][yy].addNeighbours(Direction.EAST, levelData[xx+1][yy]);
+
+        }
+        if (yy+1 < levelData[xx].length && levelData[xx][yy+1] != null) {
+            levelData[xx][yy].addNeighbours(Direction.SOUTH, levelData[xx][yy+1]);
+
+        }
+        if (xx-1 >= 0 && levelData[xx-1][yy] != null) {
+            levelData[xx][yy].addNeighbours(Direction.WEST, levelData[xx-1][yy]);
+        }
     }
 }

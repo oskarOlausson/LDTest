@@ -22,9 +22,16 @@ public abstract class Entity {
     protected double dx = 0;
     protected double dy = 0;
 
+    public Entity(Sprite sprite, Position position, Dimension size) {
+        this.sprite = sprite;
+        this.position = position;
+        this.size = size;
+    }
+
     public Entity(Sprite sprite, Position position) {
         this.sprite = sprite;
         this.position = position;
+        this.size = new Dimension(sprite.getWidth(), sprite.getHeight());
     }
 
     public Entity(Sprite sprite) {
@@ -54,17 +61,17 @@ public abstract class Entity {
     }
 
     public boolean collides(Entity other) {
-        return getCollisionBox().contains(other.getCollisionBox());
+        return getCollisionBox().intersects(other.getCollisionBox());
     }
     public boolean collides(Rectangle other) {
-        return getCollisionBox().contains(other);
+        return getCollisionBox().intersects(other);
     }
 
     public int getX() {return position.getDrawX();}
     public int getY() {return position.getDrawY();}
 
     public Position getPosition() {
-        return position.copy();
+        return position;
     }
     public void setPosition(int x, int y) {
         position.update(x, y);

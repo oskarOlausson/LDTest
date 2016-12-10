@@ -2,7 +2,7 @@ package JSON;
 
 import Normal.Library;
 
-import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Created by oskar on 2016-12-07.
@@ -21,7 +21,7 @@ public class Tileset {
     private int tileheight;
     private int tilewidth;
 
-    public Image getImage(int index) {
+    public BufferedImage getImage(int index) {
         return Library.loadTile(image, index - 1, tilewidth, tileheight);
     }
 

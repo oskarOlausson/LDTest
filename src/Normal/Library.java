@@ -33,7 +33,7 @@ public class Library {
         return image.getSubimage(x, y, width, height);
     }
     public static BufferedImage loadTile(BufferedImage image, int i, int width, int height) {
-        final int cols = image.getHeight() / height;
+        final int cols = image.getWidth() / width;
 
         int x = i % cols;
         int y = i / cols;

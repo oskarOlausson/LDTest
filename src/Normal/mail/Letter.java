@@ -5,14 +5,15 @@
  */
 package Normal.mail;
 
+import Normal.Position;
 import Normal.Sprite;
 
 import java.awt.event.MouseEvent;
 
 public class Letter extends Mail {
 
-    public Letter() {
-        super(new Sprite("player", 32));
+    public Letter(int x, int y) {
+        super(new Sprite("player", 32), new Position(x, y));
     }
 
     @Override

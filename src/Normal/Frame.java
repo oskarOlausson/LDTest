@@ -21,7 +21,7 @@ public class Frame extends JFrame {
         setResizable(false);
         pack();
 
-        setTitle("LD-jam");
+        setTitle("PostMailPackageMailRoomOffice");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }

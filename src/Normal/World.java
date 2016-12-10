@@ -15,7 +15,7 @@ public class World extends JPanel implements ActionListener, MouseListener {
 
     private boolean running = false;
     private ReentrantLock lock = new ReentrantLock();
-    private Level level = new Level("island");
+    private Level level = new Level("level");
     private List<Integer> keys = new ArrayList<>();
     private List<Mover> movers = new ArrayList<>();
 
@@ -94,6 +94,11 @@ public class World extends JPanel implements ActionListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent event) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent event) {
         if (SwingUtilities.isLeftMouseButton(event)) {
             level.leftClick(event);
         } else if (SwingUtilities.isRightMouseButton(event)) {
@@ -102,22 +107,17 @@ public class World extends JPanel implements ActionListener, MouseListener {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mouseReleased(MouseEvent event) {
 
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseEntered(MouseEvent event) {
 
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(MouseEvent event) {
 
     }
 

@@ -6,9 +6,10 @@ package Normal;
  */
 public enum Constants {
 
-    WIDTH (320), //height of screen
-    HEIGHT (320), //width of screen
-    SECOND (60); //how many ticks in one second
+    WIDTH (800), //height of screen
+    HEIGHT (600), //width of screen
+    SECOND (60), //how many ticks in one second
+    TICKS_PER_STEP(30);
 
     int value;
     Constants(int value) {
