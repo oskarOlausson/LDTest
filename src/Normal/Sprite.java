@@ -34,6 +34,11 @@ public class Sprite {
         imageSpeed = 0;
     }
 
+    public Sprite(BufferedImage image, int width, int height) {
+        img = Library.loadSprite(image, width, height);
+    }
+
+
     public void setImageSpeed(double imageSpeed) {
         this.imageSpeed = imageSpeed;
     }

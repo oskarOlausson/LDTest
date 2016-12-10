@@ -24,7 +24,7 @@ public class Tile extends Entity {
     private Timer timer;
 
     public Tile(BufferedImage image, int x, int y, int width, int height, boolean ingoing) {
-        super(new Sprite(image), new Position(x, y), new Dimension(width, height));
+        super(new Sprite(image, 50, 50), new Position(x, y), new Dimension(width, height));
         special = true;
 
         if (ingoing) {
@@ -45,20 +45,26 @@ public class Tile extends Entity {
         onTop.forEach(Mail::tick);
     }
 
+    public boolean isSpecial() {
+        return special;
+    }
+
+    public void correctDirection() {
+        if (neighbours.get(Direction.NORTH) != null)        direction = Direction.NORTH;
+        else if (neighbours.get(Direction.WEST) != null)    direction = Direction.WEST;
+        else if (neighbours.get(Direction.SOUTH) != null)   direction = Direction.SOUTH;
+        else if (neighbours.get(Direction.EAST) != null)    direction = Direction.EAST;
+    }
+
     @Override
     public void step() {
 
-        if (special) {
-            if (neighbours.get(Direction.NORTH) != null)        direction = Direction.NORTH;
-            else if (neighbours.get(Direction.WEST) != null)    direction = Direction.WEST;
-            else if (neighbours.get(Direction.SOUTH) != null)   direction = Direction.SOUTH;
-            else if (neighbours.get(Direction.EAST) != null)    direction = Direction.EAST;
-        }
+
 
         if (ingoing) {
             timer.update();
             if (timer.isDone()) {
-                onTop.add(new Letter(getX(), getY(), true));
+                onTop.add(new Letter( position.getDrawX(), position.getDrawY(), true));
                 timer.restart();
             }
         }
@@ -80,7 +86,7 @@ public class Tile extends Entity {
 
     @Override
     public void draw(Graphics g) {
-        g.drawImage(getImage(), position.getDrawX(), position.getDrawY(), null);
+        DrawFunctions.drawImage(g, getImage(), position.getDrawX(), position.getDrawY(), 1, 1, direction.toRad());
     }
 
     public void drawPlaced(Graphics g) {

@@ -21,13 +21,14 @@ public class Level {
     private Wrapper wrapper;
     private List<Tile> tiles = new ArrayList<>();
     private List<Entity> entities = new ArrayList<>();
+    private List<Wall> decor = new ArrayList<>();
     private int tickCounter = 0;
 
     public Level(String path) {
         JsonParser t = new JsonParser();
         wrapper = t.loadJSON(path);
-        Wrapper.Layer l = wrapper.getLayer(0);
-        Tileset ts = wrapper.getTileSet(l);
+        Wrapper.Layer l = wrapper.getLayer(1);
+        Tileset ts = wrapper.getTileSet(0);
         int w = l.getWidth();
         int h = l.getHeight();
         int[] data = l.getData();
@@ -39,7 +40,13 @@ public class Level {
             if (data[i] == 0) {
                 levelData[xx][yy] = null;
             } else {
-                levelData[xx][yy] = new Tile(ts.getImage(data[i]), xx * ts.getTileWidth(), yy * ts.getTileHeight(), ts.getTileWidth(), ts.getTileHeight());
+                switch(data[i]) {
+                    case 5: levelData[xx][yy] = new Tile(Library.loadImage("input"), (int) ((xx + 0.5) * ts.getTileWidth()), (int) ((yy + 0.5) * ts.getTileHeight()), ts.getTileWidth(), ts.getTileHeight(), true);
+                        break;
+                    case 6: levelData[xx][yy] = new Tile(Library.loadImage("output"), (int) ((xx + 0.5) * ts.getTileWidth()), (int) ((yy + 0.5) * ts.getTileHeight()), ts.getTileWidth(), ts.getTileHeight(), false);
+                        break;
+                    default: levelData[xx][yy] = new Tile(ts.getImage(data[i]), (int) ((xx + 0.5) * ts.getTileWidth()), (int) ((yy + 0.5) * ts.getTileHeight()), ts.getTileWidth(), ts.getTileHeight());
+                }
             }
             xx+=1;
             if (xx >= w) {
@@ -53,7 +60,26 @@ public class Level {
                 Tile tile = tileRow[yy];
                 if (tile != null) {
                     addNeighbours(levelData, xx, yy);
+                    if (tile.isSpecial()) {
+                        tile.correctDirection();
+                    }
                 }
+            }
+        }
+
+        l = wrapper.getLayer(0);
+        data = l.getData();
+
+        xx = 0;
+        yy = 0;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != 0) {
+                decor.add(new Wall(ts.getImage(data[i]), (int) ((xx) * ts.getTileWidth()), (int) ((yy) * ts.getTileHeight())));
+            }
+            xx+=1;
+            if (xx >= w) {
+                xx = 0;
+                yy += 1;
             }
         }
     }
@@ -98,6 +124,7 @@ public class Level {
                 }
             }
         }
+        decor.forEach(wall -> wall.draw(g));
         entities.forEach(entity -> entity.draw(g));
     }
 

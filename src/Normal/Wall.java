@@ -19,6 +19,6 @@ public class Wall {
     }
 
     public void draw(Graphics g) {
-        g.drawImage(image, x, y, null);
+        DrawFunctions.drawImage(g, image, x, y);
     }
 }
