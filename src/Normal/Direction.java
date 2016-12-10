@@ -48,13 +48,13 @@ public enum Direction {
     public double toRad() {
         switch (this) {
             case NORTH:
-                return Math.PI/2;
-            case EAST:
                 return 0;
+            case EAST:
+                return Math.PI/2;
             case SOUTH:
-                return -Math.PI/2;
-            case WEST:
                 return Math.PI;
+            case WEST:
+                return -Math.PI/2;
         }
         return 0; // won't happen
     }

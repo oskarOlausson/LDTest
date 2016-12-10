@@ -67,6 +67,10 @@ public abstract class Entity {
         return getCollisionBox().intersects(other);
     }
 
+    public boolean inside(int x, int y) {
+        return getCollisionBox().contains(x, y);
+    }
+
     public int getX() {return position.getDrawX();}
     public int getY() {return position.getDrawY();}
 

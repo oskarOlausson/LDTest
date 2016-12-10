@@ -27,37 +27,19 @@ public class Tile extends Entity {
 
     @Override
     public void tick() {
-
+        placed.forEach(Placable::tick);
     }
 
     @Override
     public void step() {
+        List<Mail> toRemove = new ArrayList<>();
         for (Placable placable : placed) {
-            placable.sense(onTop);
+            placable.sense(onTop, toRemove::add);
         }
-
-        Iterator<Mail> iter = onTop.iterator();
-        while (iter.hasNext()) {
-            Mail mail = iter.next();
-            if (!mail.collides(this)) {
-                iter.remove();
-
-                Tile neighbour = null;
-                if (mail.getX() < getX()) {
-                    neighbour = neighbours.get(Direction.WEST);
-                } else if (mail.getX() > getX()) {
-                    neighbour = neighbours.get(Direction.EAST);
-                } else  if (mail.getY() < getY()) {
-                    neighbour = neighbours.get(Direction.SOUTH);
-                } else  if (mail.getY() > getY()) {
-                    neighbour = neighbours.get(Direction.NORTH);
-                }
-
-                if (neighbour != null) {
-                    neighbour.addMail(mail);
-                }
-            }
-        }
+        toRemove.forEach((mail) -> {
+            onTop.remove(mail);
+            neighbours.get(mail.getDirection()).addMail(mail);
+        });
     }
 
     @Override

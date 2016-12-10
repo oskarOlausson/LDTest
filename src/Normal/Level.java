@@ -61,6 +61,14 @@ public class Level {
     public void tick() {
         entities.forEach(Entity::tick);
 
+        for (Tile[] tileRow : levelData) {
+            for (Tile tile : tileRow) {
+                if (tile != null) {
+                    tile.tick();
+                }
+            }
+        }
+
         tickCounter++;
         if (tickCounter > Constants.TICKS_PER_STEP.value) {
             step();
