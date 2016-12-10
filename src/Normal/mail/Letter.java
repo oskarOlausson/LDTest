@@ -18,8 +18,8 @@ public class Letter extends Mail {
         super(new Position(x, y));
         this.international = international;
 
-        String path = "letterIn";
-        if (international) path = "letterOut";
+        String path = "postIn";
+        if (international) path = "postOut";
         setSprite(new Sprite(path));
     }
 
