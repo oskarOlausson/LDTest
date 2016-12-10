@@ -16,7 +16,8 @@ import java.util.List;
  * This classes has some inputs and outputs
  */
 public class Tile extends Entity {
-    private List<Mail> onTop = new ArrayList<>();
+    private Set<Mail> onTop = new HashSet<>();
+    private Set<Mail> newOnTop = new HashSet<>();
     private List<Placable> placed = new ArrayList<>();
     private HashMap<Direction, Tile> neighbours = new HashMap<>();
 
@@ -38,8 +39,17 @@ public class Tile extends Entity {
         }
         toRemove.forEach((mail) -> {
             onTop.remove(mail);
-            neighbours.get(mail.getDirection()).addMail(mail);
+
+            Tile neighbour = neighbours.get(mail.getDirection());
+            if (neighbour != null) {
+                neighbour.addMail(mail);
+            }
         });
+    }
+
+    public void stepFinished() {
+        onTop.addAll(newOnTop);
+        newOnTop.clear();
     }
 
     @Override
@@ -59,7 +69,7 @@ public class Tile extends Entity {
     }
 
     public void addMail(Mail mail) {
-        onTop.add(mail);
+        newOnTop.add(mail);
     }
 
     public void addLetter(MouseEvent event) {

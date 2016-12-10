@@ -4,6 +4,7 @@ package Normal;
 import JSON.JsonParser;
 import JSON.Tileset;
 import JSON.Wrapper;
+import Normal.hud.HUD;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -19,8 +20,8 @@ public class Level {
 
     private Tile[][] levelData;
     private Wrapper wrapper;
+    private HUD hud;
     private List<Tile> tiles = new ArrayList<>();
-    private List<Entity> entities = new ArrayList<>();
     private int tickCounter = 0;
 
     public Level(String path) {
@@ -47,9 +48,14 @@ public class Level {
                 yy += 1;
             }
         }
-        for (xx = 0; xx < levelData.length; xx++) {
+        linkTilesWithNeighours();
+        hud = new HUD();
+    }
+
+    private void linkTilesWithNeighours() {
+        for (int xx = 0; xx < levelData.length; xx++) {
             Tile[] tileRow = levelData[xx];
-            for (yy = 0; yy < tileRow.length; yy++) {
+            for (int yy = 0; yy < tileRow.length; yy++) {
                 Tile tile = tileRow[yy];
                 if (tile != null) {
                     addNeighbours(levelData, xx, yy);
@@ -59,8 +65,6 @@ public class Level {
     }
 
     public void tick() {
-        entities.forEach(Entity::tick);
-
         for (Tile[] tileRow : levelData) {
             for (Tile tile : tileRow) {
                 if (tile != null) {
@@ -74,13 +78,23 @@ public class Level {
             step();
             tickCounter = 0;
         }
+
+        hud.tick();
     }
 
     public void step() {
+
         for (Tile[] tileRow : levelData) {
             for (Tile tile : tileRow) {
                 if (tile != null) {
                     tile.step();
+                }
+            }
+        }
+        for (Tile[] tileRow : levelData) {
+            for (Tile tile : tileRow) {
+                if (tile != null) {
+                    tile.stepFinished();
                 }
             }
         }
@@ -94,10 +108,11 @@ public class Level {
                 }
             }
         }
-        entities.forEach(entity -> entity.draw(g));
+
+        hud.draw(g);
     }
 
-    private void forEachTile(Tile[][] levelData, Consumer<Tile> todo) {
+    private void forEachTile(Consumer<Tile> todo) {
         for (Tile[] tileRow : levelData) {
             for (Tile tile : tileRow) {
                 if (tile != null) {
@@ -113,6 +128,8 @@ public class Level {
         if (levelData[gridX][gridY] != null) {
             levelData[gridX][gridY].click(event);
         }
+
+        hud.click(event);
     }
 
     public void rightClick(MouseEvent event) {

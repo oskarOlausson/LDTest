@@ -17,14 +17,12 @@ public class World extends JPanel implements ActionListener, MouseListener {
     private ReentrantLock lock = new ReentrantLock();
     private Level level = new Level("level");
     private List<Integer> keys = new ArrayList<>();
-    private List<Mover> movers = new ArrayList<>();
 
     public World() {
         addKeyListener(new TAdapter());
         addMouseListener(this);
         setFocusable(true);
         setBackground(Color.BLACK);
-        movers.add(new Mover(48, 48));
     }
 
     //Frame rate back end
@@ -67,9 +65,6 @@ public class World extends JPanel implements ActionListener, MouseListener {
     }
 
     public void tick(){
-        movers.get(0).input(keys);
-        movers.get(0).tick();
-
         level.tick();
     }
 
@@ -83,7 +78,6 @@ public class World extends JPanel implements ActionListener, MouseListener {
             lock.unlock();
         }
 
-        movers.get(0).draw(g);
         Toolkit.getDefaultToolkit().sync();
     }
 
