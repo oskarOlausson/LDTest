@@ -6,12 +6,10 @@
 package Normal.mail;
 
 import Normal.DrawFunctions;
-import Normal.Entity;
 import Normal.Position;
 import Normal.Sprite;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 
 public class Letter extends Mail {
 
@@ -32,11 +30,6 @@ public class Letter extends Mail {
     @Override
     public void step() {
 
-    }
-
-    @Override
-    public Entity click(MouseEvent event) {
-        return null;
     }
 
     @Override

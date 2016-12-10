@@ -16,16 +16,19 @@ public enum Direction {
         this.value = value;
     }
 
-    public void turnClockwise() {
-        value = (value+1) % 4;
-    }
-
-    public void turnCounterClockwise() {
-        value = (value+3) % 4;
-    }
-
-    public void turnAround() {
-        value = (value+2) % 4;
+    public Direction turnAround() {
+        switch(this) {
+            case NORTH:
+                return SOUTH;
+            case EAST:
+                return WEST;
+            case SOUTH:
+                return NORTH;
+            case WEST:
+                return EAST;
+            default:
+                return null;
+        }
     }
 
     public void addToPosition(Position position, int addAmount) {

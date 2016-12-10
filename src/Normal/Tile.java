@@ -1,5 +1,6 @@
 package Normal;
 
+import Normal.mail.BigBox;
 import Normal.mail.Letter;
 import Normal.mail.Mail;
 import Normal.placable.Placeable;
@@ -18,7 +19,7 @@ import java.util.List;
 public class Tile extends Entity {
     private Set<Mail> onTop = new HashSet<>();
     private Set<Mail> newOnTop = new HashSet<>();
-    private Map<Class<? extends Placeable>, Placeable> placed = new HashMap<>();
+    Placeable placed = null;
     private HashMap<Direction, Tile> neighbours = new HashMap<>();
     private boolean special = false;
     private boolean ingoing = false;
@@ -47,7 +48,9 @@ public class Tile extends Entity {
 
     @Override
     public void tick() {
-        placed.forEach((type, placeable) -> placeable.tick());
+        if (placed != null) {
+            placed.tick();
+        }
         onTop.forEach(Mail::tick);
     }
 
@@ -62,14 +65,35 @@ public class Tile extends Entity {
         else if (neighbours.get(Direction.EAST) != null)    direction = Direction.EAST;
     }
 
+    public void newMail() {
+        if (newOnTop.size() == 0) return;
+
+        boolean move = false;
+        Tile goTo = neighbours.get(getDirection());
+        List<Tile> list = new ArrayList<>();
+        list.add(this);
+
+        if (goTo == null) return;
+        if (goTo.hasMail()) {
+            if (goTo.moveMaid(list, getDirection())) {
+                move = true;
+            }
+        }
+        else move = true;
+
+        if (move) {
+            actualMove(direction);
+        }
+    }
+
     @Override
     public void step() {
         if (special) {
             if (ingoing) {
                 timer.update();
                 if (timer.isDone()) {
-                    Tile giveTo = neighbours.get(direction);
-                    giveTo.addMail(new Letter(giveTo.getX(), giveTo.getY(), true));
+                    newOnTop.add(new Letter(getX(), getY(),false));
+                    newMail();
                     timer.restart();
                 }
             }
@@ -81,9 +105,9 @@ public class Tile extends Entity {
         }
 
         List<Mail> toRemove = new ArrayList<>();
-        for (Placeable placable : placed.values()) {
-            placable.sense(onTop, this, toRemove::add);
-        }
+
+        if (placed != null) placed.sense(onTop, this);
+
         toRemove.forEach((mail) -> {
             onTop.remove(mail);
 
@@ -99,12 +123,10 @@ public class Tile extends Entity {
         return neighbours;
     }
 
-    @Override
-    public Entity click(MouseEvent event) {
+    public Entity click() {
         if (!special) {
-            Placeable p = createPlacable();
-            placed.put(type, p);
-            return p;
+            placed = createPlacable();
+            return placed;
         }
         return null;
     }
@@ -140,7 +162,7 @@ public class Tile extends Entity {
     }
 
     public void drawPlaced(Graphics g) {
-        placed.forEach((type, entity) -> entity.draw(g));
+        if (placed != null) placed.draw(g);
     }
 
     public void drawOnTop(Graphics g) {
@@ -154,7 +176,63 @@ public class Tile extends Entity {
         newOnTop.add(mail);
     }
 
+    public void actualMove(Direction direction) {
+        Tile neighbour = neighbours.get(direction);
+        if (neighbour != null) {
+            onTop.forEach(m -> {
+                m.setDirection(direction);
+                direction.addToPosition(m.getPosition(), getWidth());
+            });
+            onTop.forEach(neighbour::addMail);
+            onTop.clear();
+        }
+        else System.err.println("Could not move");
+    }
+
     public void addLetter(MouseEvent event) {
         onTop.add(new Letter( position.getDrawX(), position.getDrawY(), true));
+    }
+
+    public boolean moveMaid(List<Tile> tiles, Direction direction) {
+
+        if (!tiles.contains(this)) {
+            tiles.add(this);
+            Direction direction2;
+            Tile goTo;
+            boolean success = false;
+
+            if (placed != null) {
+                direction2 = placed.getDirection();
+                goTo = neighbours.get(direction2);
+                if (goTo == null) {
+
+                }
+                else if (goTo.hasMail()) {
+                    if (goTo.moveMaid(tiles, direction2)) {
+                        success = true;
+                        direction = direction2;
+                    }
+                }
+                else {
+                    success = true;
+                    direction = direction2;
+                }
+            }
+
+            if (!success) {
+                goTo = neighbours.get(direction);
+
+                if (goTo == null) {
+                    return false;
+                }
+                if (goTo.hasMail()) {
+                    if (!goTo.moveMaid(tiles, direction)) return false;
+                }
+            }
+        }
+        else return false;
+
+        actualMove(direction);
+        return true;
     }
 }

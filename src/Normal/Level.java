@@ -5,6 +5,7 @@ import JSON.JsonParser;
 import JSON.Tileset;
 import JSON.Wrapper;
 import Normal.hud.HUD;
+import Normal.placable.Mover;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -157,36 +158,37 @@ public class Level {
         }
     }
 
-    public void leftClick(MouseEvent event) {
-        Entity now;
-        int gridX = event.getX()/50;
-        int gridY = event.getY()/50;
+    public void leftClick(int mouseX, int mouseY, boolean hold) {
+        Entity now = null;
+        int gridX = mouseX/50;
+        int gridY = mouseY/50;
         boolean inBounds;
-        inBounds = (gridX < levelData.length);
+        inBounds = (gridX < levelData.length) && (gridX > 0) && (gridY < levelData[0].length) && (gridY > 0);
 
         if (inBounds && levelData[gridX][gridY] != null) {
 
             levelData[gridX][gridY].setPlacableType(hud.selected());
-            now = levelData[gridX][gridY].click(event);
 
-        if (latest != null && now != null) {
+            if (!hold || hud.selected().equals(Mover.class)) now = levelData[gridX][gridY].click();
 
-                if (now.getPosition().distanceToPosition(latest.getPosition()) < 60) {
-                    if (Math.abs(now.getX() - latest.getX()) > Math.abs(now.getY() - latest.getY())) {
-                        if (latest.getX() < now.getX()) latest.setDirection(Direction.EAST);
+            if (latest != null) {
+                double dist = new Position(mouseX, mouseY).distanceToPosition(latest.getPosition());
+                if (dist < 60 && dist > 10) {
+                    if (Math.abs(mouseX - latest.getX()) > Math.abs(mouseY - latest.getY())) {
+                        if (latest.getX() < mouseX) latest.setDirection(Direction.EAST);
                         else latest.setDirection(Direction.WEST);
                     } else {
-                        if (latest.getY() < now.getY()) latest.setDirection(Direction.SOUTH);
+                        if (latest.getY() < mouseY) latest.setDirection(Direction.SOUTH);
                         else latest.setDirection(Direction.NORTH);
                     }
-                    now.setDirection(latest.direction);
+                    if (now != null) now.setDirection(latest.direction);
                 }
             }
-            latest = now;
+
+            if (now != null) latest = now;
 
         }
-
-        hud.click(event);
+        else hud.click(mouseX, mouseY);
     }
 
     public void rightClick(MouseEvent event) {
@@ -213,5 +215,9 @@ public class Level {
         if (xx-1 >= 0 && levelData[xx-1][yy] != null) {
             levelData[xx][yy].addNeighbours(Direction.WEST, levelData[xx-1][yy]);
         }
+    }
+
+    public HUD getHud() {
+        return hud;
     }
 }

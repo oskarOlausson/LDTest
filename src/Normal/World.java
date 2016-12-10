@@ -1,5 +1,7 @@
 package Normal;
 
+import Normal.placable.Mover;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,6 +19,7 @@ public class World extends JPanel implements ActionListener, MouseListener {
     private ReentrantLock lock = new ReentrantLock();
     private Level level = new Level("level");
     private List<Integer> keys = new ArrayList<>();
+    private boolean mouseIsPressed = false;
 
     public World() {
         addKeyListener(new TAdapter());
@@ -65,6 +68,12 @@ public class World extends JPanel implements ActionListener, MouseListener {
     }
 
     public void tick(){
+
+        if (mouseIsPressed) {
+            Point mouse = getMousePosition();
+
+            if (mouse != null) level.leftClick((int) mouse.getX(), (int) mouse.getY(), true);
+        }
         level.tick();
     }
 
@@ -94,7 +103,8 @@ public class World extends JPanel implements ActionListener, MouseListener {
     @Override
     public void mousePressed(MouseEvent event) {
         if (SwingUtilities.isLeftMouseButton(event)) {
-            level.leftClick(event);
+            level.leftClick(event.getX(), event.getY(), mouseIsPressed);
+            mouseIsPressed = true;
         } else if (SwingUtilities.isRightMouseButton(event)) {
             level.rightClick(event);
         }
@@ -102,7 +112,9 @@ public class World extends JPanel implements ActionListener, MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent event) {
-
+        if (SwingUtilities.isLeftMouseButton(event)) {
+            mouseIsPressed = false;
+        }
     }
 
     @Override

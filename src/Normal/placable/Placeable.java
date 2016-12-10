@@ -13,9 +13,6 @@ import java.util.HashMap;
 
 public abstract class Placeable extends Entity {
 
-    public interface MailRemovedListener {
-        void mailRemoved(Mail mail);
-    }
 
     public Placeable(Sprite sprite, Position position) {
         super(sprite, position);
@@ -26,5 +23,5 @@ public abstract class Placeable extends Entity {
     }
 
     public abstract void sense(Collection<Mail> sensed,
-                               Tile tile, MailRemovedListener listener);
+                               Tile tile);
 }

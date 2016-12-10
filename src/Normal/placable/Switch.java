@@ -5,7 +5,10 @@
  */
 package Normal.placable;
 
-import Normal.*;
+import Normal.Direction;
+import Normal.Position;
+import Normal.Sprite;
+import Normal.Tile;
 import Normal.mail.Mail;
 
 import java.util.ArrayList;
@@ -13,12 +16,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-public class Mover extends Placeable {
+public class Switch extends Placeable {
 
     private static final int MOVE_AMOUNT = 50;
 
-    public Mover(int x, int y) {
-        super(new Sprite("mover", 50), new Position(x, y));
+    public Switch(int x, int y) {
+        super(new Sprite("switch", 50), new Position(x, y));
+        sprite.setImageSpeed(1);
     }
 
     @Override
@@ -28,16 +32,19 @@ public class Mover extends Placeable {
         List<Tile> list = new ArrayList<>();
 
         tile.moveMaid(list, getDirection());
+
+        direction = direction.turnAround();
+
+        sprite.update();
     }
 
     @Override
     public void tick() {
-        sprite.update();
+
     }
 
     @Override
     public void step() {
 
     }
-
 }

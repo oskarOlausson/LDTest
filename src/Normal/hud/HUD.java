@@ -8,6 +8,7 @@ package Normal.hud;
 import Normal.Constants;
 import Normal.placable.Mover;
 import Normal.placable.Placeable;
+import Normal.placable.Switch;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -30,13 +31,13 @@ public class HUD {
         selected = new Button("mover", Mover.class, 25, 25, Constants.HUD_WIDTH.value, 50);
         buttons.add(selected);
         buttons.add(new Button("spinner", Mover.class, 25, 75, Constants.HUD_WIDTH.value, 50));
-        buttons.add(new Button("switch", Mover.class, 25, 125, Constants.HUD_WIDTH.value, 50));
+        buttons.add(new Button("switch", Switch.class, 25, 125, Constants.HUD_WIDTH.value, 50));
         buttons.add(new Button("jumper", Mover.class, 25, 175, Constants.HUD_WIDTH.value, 50));
     }
 
-    public void click(MouseEvent event) {
+    public void click(int mouseX, int mouseY) {
         for (Button button : buttons) {
-            if (button.inside(event.getX()-x, event.getY()-y)) {
+            if (button.inside(mouseX-x, mouseY-y)) {
                 selected = button;
             }
         }
