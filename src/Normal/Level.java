@@ -23,6 +23,7 @@ public class Level {
     private List<Entity> entities = new ArrayList<>();
     private List<Wall> decor = new ArrayList<>();
     private int tickCounter = 0;
+    private Entity latest = null;
 
     public Level(String path) {
         JsonParser t = new JsonParser();
@@ -139,10 +140,24 @@ public class Level {
     }
 
     public void leftClick(MouseEvent event) {
+        Entity now;
         int gridX = event.getX()/50;
         int gridY = event.getY()/50;
         if (levelData[gridX][gridY] != null) {
-            levelData[gridX][gridY].click(event);
+            now = levelData[gridX][gridY].click(event);
+
+            if (latest != null) {
+                if (now.getPosition().distanceToPosition(latest.getPosition()) < 60) {
+                    if (Math.abs(now.getX() - latest.getX()) > Math.abs(now.getY() - latest.getY())) {
+                        if (latest.getX() < now.getX()) latest.setDirection(Direction.EAST);
+                        else latest.setDirection(Direction.WEST);
+                    } else {
+                        if (latest.getY() < now.getY()) latest.setDirection(Direction.NORTH);
+                        else latest.setDirection(Direction.SOUTH);
+                    }
+                }
+            }
+            latest = now;
         }
     }
 

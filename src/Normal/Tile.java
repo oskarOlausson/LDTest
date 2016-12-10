@@ -91,8 +91,13 @@ public class Tile extends Entity {
     }
 
     @Override
-    public void click(MouseEvent event) {
-        if (!special) placed.add(new Mover(position.getDrawX(), position.getDrawY()));
+    public Entity click(MouseEvent event) {
+        if (!special) {
+            Mover mover = new Mover(position.getDrawX(), position.getDrawY());
+            placed.add(mover);
+            return mover;
+        }
+        return null;
     }
 
     @Override

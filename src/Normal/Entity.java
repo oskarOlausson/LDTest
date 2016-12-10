@@ -54,7 +54,7 @@ public abstract class Entity {
 
     public abstract void step();
 
-    public abstract void click(MouseEvent event);
+    public abstract Entity click(MouseEvent event);
 
     //if the object should be removed
     protected boolean remove = false;

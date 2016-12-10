@@ -5,10 +5,7 @@
  */
 package Normal.placable;
 
-import Normal.Direction;
-import Normal.Position;
-import Normal.Sprite;
-import Normal.Tile;
+import Normal.*;
 import Normal.mail.Mail;
 
 import java.awt.event.MouseEvent;
@@ -52,7 +49,7 @@ public class Mover extends Placable {
     }
 
     @Override
-    public void click(MouseEvent event) {
-
+    public Entity click(MouseEvent event) {
+        return null;
     }
 }

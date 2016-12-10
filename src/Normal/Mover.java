@@ -56,8 +56,8 @@ public class Mover extends Entity {
     }
 
     @Override
-    public void click(MouseEvent event) {
-
+    public Entity click(MouseEvent event) {
+        return null;
     }
 
 

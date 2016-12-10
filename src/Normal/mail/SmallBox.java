@@ -6,6 +6,7 @@
 package Normal.mail;
 
 import Normal.DrawFunctions;
+import Normal.Entity;
 import Normal.Position;
 import Normal.Sprite;
 
@@ -35,8 +36,8 @@ public class SmallBox extends Mail {
     }
 
     @Override
-    public void click(MouseEvent event) {
-
+    public Entity click(MouseEvent event) {
+        return null;
     }
 
     @Override
