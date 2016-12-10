@@ -28,7 +28,7 @@ public class Level {
     public Level(String path) {
         JsonParser t = new JsonParser();
         wrapper = t.loadJSON(path);
-        Wrapper.Layer l = wrapper.getLayer("Tile Layer 1");
+        Wrapper.Layer l = wrapper.getLayer(0);
         Tileset ts = wrapper.getTileSet(l);
         int w = l.getWidth();
         int h = l.getHeight();
