@@ -1,22 +1,17 @@
 package Normal;
 
-import javafx.scene.input.KeyCode;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.concurrent.locks.ReentrantLock;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * The object that controls all graphics and all things seen on screen
  */
 
-public class World extends JPanel implements ActionListener {
+public class World extends JPanel implements ActionListener, MouseListener {
 
     private boolean running = false;
     private ReentrantLock lock = new ReentrantLock();
@@ -92,6 +87,33 @@ public class World extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         //for buttons and such
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent event) {
+        if (SwingUtilities.isLeftMouseButton(event)) {
+        } else if (SwingUtilities.isRightMouseButton(event)) {
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 
     /**
