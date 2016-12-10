@@ -1,5 +1,7 @@
 package Normal;
+
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * For easy object creation, make this
@@ -7,18 +9,22 @@ import java.awt.*;
  */
 public abstract class Entity {
 
+
+
     //position variables
     protected Position position;
     protected Dimension size;
     protected Sprite sprite;
     protected double scaleX = 1;
     protected double scaleY = 1;
-    protected double direction = 0;
+    protected Direction direction = Direction.NORTH;
 
     protected double dx = 0;
     protected double dy = 0;
 
     public abstract void tick();
+
+    public abstract void click(MouseEvent event);
 
     //if the object should be removed
     protected boolean remove = false;
@@ -46,10 +52,10 @@ public abstract class Entity {
     public Position getPosition() {
         return position.copy();
     }
-    public void setPosition(double x, double y) {
+    public void setPosition(int x, int y) {
         position.update(x, y);
     }
-    public void addToPosition(double x, double y) {
+    public void addToPosition(int x, int y) {
         position.update(position.getX() + x, position.getY() + y);
     }
 
@@ -63,8 +69,13 @@ public abstract class Entity {
     public Image getImage(){
         return sprite.getImage();
     }
-    protected double getDirection(){
+
+    public Direction getDirection() {
         return direction;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 
     //sets flag to be removed when time comes
@@ -76,6 +87,6 @@ public abstract class Entity {
     }
 
     public void draw(Graphics g) {
-        DrawFunctions.drawImage(g, sprite.getImage(), getX(), getY(), scaleX, scaleY, direction);
+        DrawFunctions.drawImage(g, sprite.getImage(), getX(), getY(), scaleX, scaleY, direction.toRad());
     }
 }

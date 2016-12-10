@@ -5,19 +5,20 @@ package Normal;
  * This classes has some inputs and outputs
  */
 public class Position {
-    private double x;
-    private double y;
+    private int x;
+    private int y;
 
     public Position(int x, int y) {
-        this((double) x, (double) y);
-    }
-
-    public Position(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public void update(double x, double y) {
+    public Position(double x, double y) {
+        this.x = (int) x;
+        this.y = (int) y;
+    }
+
+    public void update(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -26,20 +27,28 @@ public class Position {
         return Math.sqrt(Math.pow(p.getX() - getX(), 2) - Math.pow(p.getY() - getY(), 2));
     }
 
-    public double getX() {
+    public int getX() {
         return x;
     }
 
-    public double getY() {
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
         return y;
     }
 
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public int getDrawX() {
-        return (int) x;
+        return x;
     }
 
     public int getDrawY() {
-        return (int) y;
+        return y;
     }
 
     public Position copy() {
@@ -53,18 +62,15 @@ public class Position {
 
         Position position = (Position) o;
 
-        if (Double.compare(position.getX(), getX()) != 0) return false;
-        return Double.compare(position.getY(), getY()) == 0;
+        if (x != position.x) return false;
+        return y == position.y;
+
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(getX());
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getY());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        int result = x;
+        result = 31 * result + y;
         return result;
     }
 }

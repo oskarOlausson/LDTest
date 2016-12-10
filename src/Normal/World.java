@@ -92,7 +92,9 @@ public class World extends JPanel implements ActionListener, MouseListener {
     @Override
     public void mouseClicked(MouseEvent event) {
         if (SwingUtilities.isLeftMouseButton(event)) {
+            System.out.println("Left");
         } else if (SwingUtilities.isRightMouseButton(event)) {
+            System.out.println("Right");
         }
     }
 

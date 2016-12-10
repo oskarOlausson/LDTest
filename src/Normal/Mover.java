@@ -51,6 +51,11 @@ public class Mover extends Entity {
     }
 
     @Override
+    public void click() {
+
+    }
+
+    @Override
     public void draw(Graphics g) {
         DrawFunctions.drawImage(g, getImage(), getX(), getY(), scaleX, scaleY, direction);
     }
