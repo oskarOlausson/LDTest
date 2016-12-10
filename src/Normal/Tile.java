@@ -54,12 +54,12 @@ public class Tile extends Entity {
 
     @Override
     public void click(MouseEvent event) {
-        placed.add(new Mover(position.getX()+(int)size.getWidth()/2, position.getY()+(int)size.getHeight()/2));
+        placed.add(new Mover(position.getDrawX()+(int)size.getWidth()/2, position.getDrawY()+(int)size.getHeight()/2));
     }
 
     @Override
     public void draw(Graphics g) {
-        g.drawImage(getImage(), position.getX(), position.getY(), null);
+        g.drawImage(getImage(), position.getDrawX(), position.getDrawY(), null);
         placed.forEach(entity -> entity.draw(g));
         onTop.forEach(entity -> entity.draw(g));
     }
@@ -73,6 +73,6 @@ public class Tile extends Entity {
     }
 
     public void addLetter(MouseEvent event) {
-        onTop.add(new Letter(position.getX()+(int)size.getWidth()/2, position.getY()+(int)size.getHeight()/2));
+        onTop.add(new Letter( position.getDrawX() + getWidth() / 2, position.getDrawY() + getWidth() / 2, true));
     }
 }

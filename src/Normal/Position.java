@@ -5,20 +5,15 @@ package Normal;
  * This classes has some inputs and outputs
  */
 public class Position {
-    private int x;
-    private int y;
+    private double x;
+    private double y;
 
-    public Position(int x, int y) {
+    public Position(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public Position(double x, double y) {
-        this.x = (int) x;
-        this.y = (int) y;
-    }
-
-    public void update(int x, int y) {
+    public void update(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -27,28 +22,28 @@ public class Position {
         return Math.sqrt(Math.pow(p.getX() - getX(), 2) - Math.pow(p.getY() - getY(), 2));
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
     public int getDrawX() {
-        return x;
+        return (int) x;
     }
 
     public int getDrawY() {
-        return y;
+        return (int) y;
     }
 
     public Position copy() {
@@ -69,8 +64,12 @@ public class Position {
 
     @Override
     public int hashCode() {
-        int result = x;
-        result = 31 * result + y;
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(getX());
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(getY());
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 }

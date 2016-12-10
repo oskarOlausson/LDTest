@@ -11,11 +11,25 @@ import Normal.Sprite;
 
 public abstract class Mail extends Entity {
 
-    public Mail(Sprite sprite) {
-        super(sprite);
+    protected boolean international;
+    protected Type letterType;
+    protected Position animation;
+
+
+
+    public Mail(Position position) {
+        super(position);
+        animation = position.copy();
     }
 
-    public Mail(Sprite sprite, Position position) {
-        super(sprite, position);
+    public boolean isInternational() { return international; }
+
+    public abstract Type getType();
+
+    public void animate() {
+        sprite.update();
+        double animX = 0.8 * animation.getX() + 0.2 * getX();
+        double animY = 0.8 * animation.getY() + 0.2 * getY();
+        animation.update(animX, animY);
     }
 }

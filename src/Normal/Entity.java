@@ -22,6 +22,10 @@ public abstract class Entity {
     protected double dx = 0;
     protected double dy = 0;
 
+    public Entity(Position position) {
+        this.position = position;
+    }
+
     public Entity(Sprite sprite, Position position, Dimension size) {
         this.sprite = sprite;
         this.position = position;
@@ -38,6 +42,11 @@ public abstract class Entity {
         this.sprite = sprite;
         this.position = new Position(0, 0);
         this.size = new Dimension(sprite.getWidth(), sprite.getHeight());
+    }
+
+    public void setSprite(Sprite s) {
+        this.sprite = s;
+        this.size = new Dimension(s.getWidth(), s.getHeight());
     }
 
 
