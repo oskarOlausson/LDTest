@@ -5,12 +5,11 @@
  */
 package Normal.placable;
 
-import Normal.Entity;
-import Normal.Position;
-import Normal.Sprite;
+import Normal.*;
 import Normal.mail.Mail;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 public abstract class Placable extends Entity {
 
@@ -27,5 +26,5 @@ public abstract class Placable extends Entity {
     }
 
     public abstract void sense(Collection<Mail> sensed,
-                               MailRemovedListener listener);
+                               Tile tile, MailRemovedListener listener);
 }

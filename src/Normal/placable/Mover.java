@@ -5,12 +5,15 @@
  */
 package Normal.placable;
 
+import Normal.Direction;
 import Normal.Position;
 import Normal.Sprite;
+import Normal.Tile;
 import Normal.mail.Mail;
 
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.HashMap;
 
 public class Mover extends Placable {
 
@@ -21,11 +24,20 @@ public class Mover extends Placable {
     }
 
     @Override
-    public void sense(Collection<Mail> sensed, MailRemovedListener listener) {
+    public void sense(Collection<Mail> sensed, Tile tile, MailRemovedListener listener) {
         for (Mail mail : sensed) {
-            getDirection().addToPosition(mail.getPosition(), MOVE_AMOUNT);
+
             mail.setDirection(getDirection());
+            HashMap<Direction, Tile> neighbours = tile.getNeighbours();
+
+            Tile goTo = neighbours.get(getDirection());
+
+            if (goTo == null) continue;
+            if (goTo.hasMail()) continue;
+
+            //success
             listener.mailRemoved(mail);
+            getDirection().addToPosition(mail.getPosition(), MOVE_AMOUNT);
         }
     }
 

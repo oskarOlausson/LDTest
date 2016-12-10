@@ -31,8 +31,10 @@ public class Tile extends Entity {
             this.ingoing = true;
             timer = new Timer(5);
         }
+    }
 
-
+    public boolean hasMail() {
+        return (!onTop.isEmpty());
     }
 
     public Tile(BufferedImage image, int x, int y, int width, int height) {
@@ -58,20 +60,25 @@ public class Tile extends Entity {
 
     @Override
     public void step() {
-
-
-
-        if (ingoing) {
-            timer.update();
-            if (timer.isDone()) {
-                onTop.add(new Letter( position.getDrawX(), position.getDrawY(), true));
-                timer.restart();
+        if (special) {
+            if (ingoing) {
+                timer.update();
+                if (timer.isDone()) {
+                    Tile giveTo = neighbours.get(direction);
+                    giveTo.addMail(new Letter(giveTo.getX(), giveTo.getY(), true));
+                    timer.restart();
+                }
+            }
+            else {
+                if (hasMail()) {
+                    onTop.clear();
+                }
             }
         }
 
         List<Mail> toRemove = new ArrayList<>();
         for (Placable placable : placed) {
-            placable.sense(onTop, toRemove::add);
+            placable.sense(onTop, this, toRemove::add);
         }
         toRemove.forEach((mail) -> {
             onTop.remove(mail);
@@ -79,9 +86,13 @@ public class Tile extends Entity {
         });
     }
 
+    public HashMap<Direction, Tile> getNeighbours() {
+        return neighbours;
+    }
+
     @Override
     public void click(MouseEvent event) {
-        if (!special) placed.add(new Mover(position.getDrawX()+(int)size.getWidth()/2, position.getDrawY()+(int)size.getHeight()/2));
+        if (!special) placed.add(new Mover(position.getDrawX(), position.getDrawY()));
     }
 
     @Override
@@ -96,7 +107,6 @@ public class Tile extends Entity {
     public void drawOnTop(Graphics g) {
         onTop.forEach(entity -> entity.draw(g));
     }
-
     public void addNeighbours(Direction direction, Tile tile) {
         neighbours.put(direction, tile);
     }
@@ -106,6 +116,6 @@ public class Tile extends Entity {
     }
 
     public void addLetter(MouseEvent event) {
-        onTop.add(new Letter( position.getDrawX() + getWidth() / 2, position.getDrawY() + getWidth() / 2, true));
+        onTop.add(new Letter( position.getDrawX(), position.getDrawY(), true));
     }
 }
