@@ -12,14 +12,15 @@ import Normal.Sprite;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class Letter extends Mail {
+public class BigBox extends Mail {
 
-    public Letter(int x, int y, boolean international) {
+    public BigBox(int x, int y, boolean international) {
         super(new Position(x, y));
+
         this.international = international;
 
-        String path = "letterIn";
-        if (international) path = "letterOut";
+        String path = "bigBoxIn";
+        if (international) path = "bigBoxOut";
         setSprite(new Sprite(path));
     }
 
@@ -40,7 +41,7 @@ public class Letter extends Mail {
 
     @Override
     public Type getType() {
-        return Type.LETTER;
+        return Type.SMALL_BOX;
     }
 
     @Override
