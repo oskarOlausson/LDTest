@@ -19,7 +19,7 @@ public class HUD {
 
 
     public interface ChangeCursorListener {
-        void onChange(Image image);
+        void onChangeCursor(Image image);
     }
 
 
@@ -61,9 +61,9 @@ public class HUD {
             if (button.inside(mouseX-x, mouseY-y)) {
                 selected = button;
                 if (selected.getType() == null) {
-                    cursorListener.onChange(bulldozerCursor);
+                    cursorListener.onChangeCursor(bulldozerCursor);
                 } else {
-                    cursorListener.onChange(null);
+                    cursorListener.onChangeCursor(null);
                 }
             }
         }

@@ -128,12 +128,12 @@ public class World extends JPanel implements ActionListener, MouseListener, HUD.
     }
 
     @Override
-    public void onChange(Image image) {
+    public void onChangeCursor(Image image) {
         if (image == null) {
             setCursor(Cursor.getDefaultCursor());
         } else {
             Toolkit toolkit = Toolkit.getDefaultToolkit();
-            Cursor c = toolkit.createCustomCursor(image , new Point(getX(), getY()), "img");
+            Cursor c = toolkit.createCustomCursor(image , new Point(getX()+10, getY()+10), "img");
             setCursor (c);
         }
     }

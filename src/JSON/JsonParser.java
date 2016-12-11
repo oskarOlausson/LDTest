@@ -14,7 +14,7 @@ public class JsonParser {
 
     public Wrapper loadJSON(String str) {
 
-        String path = "../" + str;
+        String path = "/" + str;
 
         if (!path.substring(path.length() - 5).equals(".json")) path += ".json";
         URL url = getClass().getResource(path);

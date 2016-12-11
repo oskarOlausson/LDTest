@@ -4,17 +4,21 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
 /**
  * Created by Oskar on 2016-12-07.
  * This classes has some inputs and outputs
  */
 public class Library {
 
+
+
     //standard images
     public static BufferedImage loadImage(String string) {
         ImageRes res = new ImageRes(string);
         return loadImage(res);
     }
+
     public static BufferedImage loadImage(ImageRes res) {
         BufferedImage img = null;
 
