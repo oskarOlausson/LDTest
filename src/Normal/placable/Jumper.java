@@ -20,7 +20,7 @@ public class Jumper extends Placeable {
     private static final int MOVE_AMOUNT = 50;
 
     public Jumper(int x, int y) {
-        super(new Sprite("jumper", 50), new Position(x, y));
+        super(new Sprite("jumper", 50, 50), new Position(x, y));
     }
 
     @Override
@@ -31,11 +31,7 @@ public class Jumper extends Placeable {
         list.add(tile);
 
         Tile target = tile.getNeighbours().get(direction);
-
-        //TODO, ugly ugly hack
-        Type t;
-        Mail[] mailArray = new Mail[10];
-        t = sensed.toArray(mailArray)[0].getType();
+        Type t = new ArrayList<>(sensed).get(0).getType();
 
         if (t == Type.BIG_BOX || t == Type.SMALL_BOX) {
             target = target.getNeighbours().get(direction);
@@ -46,7 +42,7 @@ public class Jumper extends Placeable {
 
         if (target.moveMaid(list, direction)) {
             tile.actualMove(target);
-            sprite.setImageSpeed(0.1);
+            sprite.setImageSpeed(0.5);
         }
     }
 

@@ -12,7 +12,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Created by oskar on 2016-12-07.
@@ -25,9 +24,8 @@ public class Level {
     private Tile[][] levelData;
     private Wrapper wrapper;
     private HUD hud;
-    private List<Tile> tiles = new ArrayList<>();
-    private List<Entity> entities = new ArrayList<>();
     private List<Decoration> decor = new ArrayList<>();
+    private int levelIndex = 0;
 
     private int tickCounter = 0;
     private Entity latest = null;
@@ -69,6 +67,25 @@ public class Level {
         l = wrapper.getLayer(0);
         data = l.getData();
 
+        handleSpecialTiles();
+
+        xx = 0;
+        yy = 0;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != 0) {
+                decor.add(new Decoration(ts.getImage(data[i]), (int) ((xx) * ts.getTileWidth()), (int) ((yy) * ts.getTileHeight())));
+            }
+            xx+=1;
+            if (xx >= w) {
+                xx = 0;
+                yy += 1;
+            }
+        }
+        hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0);
+        nextLevel();
+    }
+
+    private void handleSpecialTiles() {
         boolean international;
         Type letterType;
         for (int i = 0; i < outList.size(); i++) {
@@ -104,20 +121,6 @@ public class Level {
 
             inList.get(i).setPostType(international, letterType);
         }
-
-        xx = 0;
-        yy = 0;
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] != 0) {
-                decor.add(new Decoration(ts.getImage(data[i]), (int) ((xx) * ts.getTileWidth()), (int) ((yy) * ts.getTileHeight())));
-            }
-            xx+=1;
-            if (xx >= w) {
-                xx = 0;
-                yy += 1;
-            }
-        }
-        hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0);
     }
 
     private void linkTilesWithNeighours() {
@@ -169,6 +172,21 @@ public class Level {
                 }
             }
         }
+
+        boolean success = true;
+        int threashHold = 3;
+
+        for (Tile t: outList) {
+            if (t.isActive()) {
+                if (t.getScore() < threashHold) {
+                    success = false;
+                }
+            }
+        }
+
+        if (success) {
+            nextLevel();
+        }
     }
 
     public void draw(Graphics g) {
@@ -195,16 +213,6 @@ public class Level {
 
         hud.draw(g);
 
-    }
-
-    private void forEachTile(Consumer<Tile> todo) {
-        for (Tile[] tileRow : levelData) {
-            for (Tile tile : tileRow) {
-                if (tile != null) {
-                    todo.accept(tile);
-                }
-            }
-        }
     }
 
     public void leftClick(int mouseX, int mouseY, boolean hold) {
@@ -266,7 +274,9 @@ public class Level {
         }
     }
 
-    public HUD getHud() {
-        return hud;
+    private void nextLevel() {
+        inList.get(levelIndex).activateSender();
+        outList.get(levelIndex).activateSender();
+        levelIndex += 1;
     }
 }
