@@ -60,4 +60,8 @@ public abstract class Mail extends Entity {
 
         DrawFunctions.drawImage(g, getImage(), animation.getDrawX(), animation.getDrawY(), 1, 1, directionNumberAnimate);
     }
+
+    public boolean getInternational() {
+        return international;
+    }
 }

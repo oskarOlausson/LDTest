@@ -35,7 +35,7 @@ public class BigBox extends Mail {
 
     @Override
     public Type getType() {
-        return Type.SMALL_BOX;
+        return Type.BIG_BOX;
     }
 
 }

@@ -25,8 +25,8 @@ public class Tile extends Entity {
     private boolean international = false;
     private Type letterType = Type.LETTER;
     private Image wantImage = null;
-    private boolean senderActive = false;
-
+    private boolean active = false;
+    private int score = 0;
 
     private Class<? extends Placeable> type;
 
@@ -117,11 +117,11 @@ public class Tile extends Entity {
     }
 
     public void activateSender() {
-        senderActive = true;
+        active = true;
     }
 
     public void deActivateSender() {
-        senderActive = false;
+        active = false;
     }
 
     @Override
@@ -129,7 +129,7 @@ public class Tile extends Entity {
         if (special) {
             if (ingoing) {
                 timer.update();
-                if (timer.isDone() && senderActive) {
+                if (timer.isDone() && active) {
                     Mail mail;
 
                     switch(letterType) {
@@ -145,6 +145,13 @@ public class Tile extends Entity {
             }
             else {
                 if (hasMail()) {
+                    for (Mail m: onTop) {
+                        if (m.getType() == letterType && m.getInternational() == international) {
+                            score ++;
+                            System.out.println("score");
+                        }
+                        else System.out.println("we");
+                    }
                     onTop.clear();
                 }
             }
@@ -220,7 +227,7 @@ public class Tile extends Entity {
     }
 
     public void drawWant(Graphics g) {
-        if (special && !ingoing) {
+        if (special && !ingoing && active) {
             DrawFunctions.drawImage(g, wantImage, getX() - 50, getY() - 110);
         }
     }
@@ -253,6 +260,10 @@ public class Tile extends Entity {
     }
 
     public boolean moveMaid(List<Tile> tiles, Direction direction) {
+
+        if (special) {
+            return !ingoing;
+        }
 
         if (!tiles.contains(this)) {
             tiles.add(this);
@@ -293,9 +304,15 @@ public class Tile extends Entity {
             if (goTo.hasNewMail()) return false;
         }
 
-
-
         actualMove(direction);
         return true;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }
