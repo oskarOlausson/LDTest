@@ -117,7 +117,9 @@ public class Level {
                 yy += 1;
             }
         }
-        hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0, cursorListener);
+        hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0,
+                Constants.HUD_WIDTH.value, Constants.HEIGHT.value,
+                cursorListener);
     }
 
     private void linkTilesWithNeighours() {

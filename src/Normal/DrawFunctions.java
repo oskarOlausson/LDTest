@@ -2,6 +2,7 @@ package Normal;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
@@ -51,4 +52,16 @@ public class DrawFunctions {
         g2d.drawImage(op.filter((BufferedImage) image, null), (int) (x - Math.abs(scaleX) * width * .5), (int) (y - Math.abs(scaleY) * height * .5), null);
     }
 
+
+    /**
+     * Draw text in middle of rectangle
+     */
+    public static void drawCenteredText(Graphics g, String text, Rectangle rect) {
+        Graphics2D g2d = (Graphics2D) g;
+        FontMetrics fm = g2d.getFontMetrics();
+        Rectangle2D r = fm.getStringBounds(text, g2d);
+        int x = ((int)rect.getWidth() - (int) r.getWidth()) / 2;
+        int y = ((int)rect.getHeight() - (int) r.getHeight()) / 2 + fm.getAscent();
+        g.drawString(text, (int)rect.getX()+x, (int)rect.getY()+y);
+    }
 }
