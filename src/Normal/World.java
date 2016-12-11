@@ -1,6 +1,6 @@
 package Normal;
 
-import Normal.placable.Mover;
+import Normal.hud.HUD;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,11 +13,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * The object that controls all graphics and all things seen on screen
  */
 
-public class World extends JPanel implements ActionListener, MouseListener {
+public class World extends JPanel implements ActionListener, MouseListener, HUD.ChangeCursorListener {
 
     private boolean running = false;
     private ReentrantLock lock = new ReentrantLock();
-    private Level level = new Level("level");
+    private Level level = new Level("level", this);
     private List<Integer> keys = new ArrayList<>();
     private boolean mouseIsPressed = false;
 
@@ -125,6 +125,17 @@ public class World extends JPanel implements ActionListener, MouseListener {
     @Override
     public void mouseExited(MouseEvent event) {
 
+    }
+
+    @Override
+    public void onChange(Image image) {
+        if (image == null) {
+            setCursor(Cursor.getDefaultCursor());
+        } else {
+            Toolkit toolkit = Toolkit.getDefaultToolkit();
+            Cursor c = toolkit.createCustomCursor(image , new Point(getX(), getY()), "img");
+            setCursor (c);
+        }
     }
 
     /**

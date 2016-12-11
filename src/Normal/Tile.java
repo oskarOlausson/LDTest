@@ -195,16 +195,20 @@ public class Tile extends Entity {
     }
 
     private Placeable createPlacable() {
-        try {
-            return type.getDeclaredConstructor(int.class, int.class).newInstance(position.getDrawX(), position.getDrawY());
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        if (type == null) {
+            placed = null;
+        } else {
+            try {
+                return type.getDeclaredConstructor(int.class, int.class).newInstance(position.getDrawX(), position.getDrawY());
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -256,6 +260,10 @@ public class Tile extends Entity {
     }
 
     public boolean moveMaid(List<Tile> tiles, Direction direction) {
+
+        if (special) {
+            return !ingoing;
+        }
 
         if (!tiles.contains(this)) {
             tiles.add(this);

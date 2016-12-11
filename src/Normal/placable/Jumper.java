@@ -36,7 +36,10 @@ public class Jumper extends Placeable {
         if (t == Type.BIG_BOX || t == Type.SMALL_BOX) {
             target = target.getNeighbours().get(direction);
             if (t == Type.SMALL_BOX) {
-                target = target.getNeighbours().get(direction);
+                Tile target2 = target.getNeighbours().get(direction);
+                if (target2 != null) {
+                    target = target2;
+                }
             }
         }
 

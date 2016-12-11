@@ -21,14 +21,14 @@ public class Button {
 
     public Button(String image, Class<? extends Placeable> clazz,
                   int x, int y, int width, int height) {
-        sprite = new Sprite(image, width);
+        sprite = new Sprite(image, width, height);
         this.clazz = clazz;
         position = new Position(x, y);
         size = new Dimension(width, height);
     }
 
     public void draw(Graphics g, int x, int y) {
-        DrawFunctions.drawImage(g, sprite.getImage(), x+position.getDrawX(), y+position.getDrawY(), .7, .7, 0);
+        DrawFunctions.drawImage(g, sprite.getImage(), x+position.getDrawX(), y+position.getDrawY(), 1, 1, 0);
     }
 
     public Class<? extends Placeable> getType() {

@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by oskar on 2016-12-07.
@@ -21,6 +22,8 @@ public class Level {
 
     private final List<Tile> outList = new ArrayList<>();
     private final List<Tile> inList = new ArrayList<>();
+    private final List<Tile> unUsedIn;
+    private final List<Tile> unUsedOut;
     private Tile[][] levelData;
     private Wrapper wrapper;
     private HUD hud;
@@ -29,8 +32,9 @@ public class Level {
 
     private int tickCounter = 0;
     private Entity latest = null;
+    private Random random = new Random();
 
-    public Level(String path) {
+    public Level(String path, HUD.ChangeCursorListener cursorListener) {
         JsonParser t = new JsonParser();
         wrapper = t.loadJSON(path);
         Wrapper.Layer l = wrapper.getLayer(1);
@@ -81,46 +85,16 @@ public class Level {
                 yy += 1;
             }
         }
-        hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0);
+        hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0, cursorListener);
+
+        unUsedIn = new ArrayList<>(inList);
+        unUsedOut = new ArrayList<>(outList);
         nextLevel();
+
     }
 
     private void handleSpecialTiles() {
-        boolean international;
-        Type letterType;
-        for (int i = 0; i < outList.size(); i++) {
-            if (i % 3 == 0) {
-                letterType = Type.LETTER;
-            }
-            else if (i % 3 == 1) {
-                letterType = Type.SMALL_BOX;
-            }
-            else letterType = Type.BIG_BOX;
-
-            if (i % 2 == 0) {
-                international = true;
-            }
-            else international = false;
-
-            outList.get(i).setPostType(international, letterType);
-        }
-
-        for (int i = 0; i < inList.size(); i++) {
-            if (i % 3 == 0) {
-                letterType = Type.LETTER;
-            }
-            else if (i % 3 == 1) {
-                letterType = Type.SMALL_BOX;
-            }
-            else letterType = Type.BIG_BOX;
-
-            if (i % 2 == 0) {
-                international = true;
-            }
-            else international = false;
-
-            inList.get(i).setPostType(international, letterType);
-        }
+        //TODO remove
     }
 
     private void linkTilesWithNeighours() {
@@ -226,7 +200,9 @@ public class Level {
 
             levelData[gridX][gridY].setPlacableType(hud.selected());
 
-            if (!hold || hud.selected().equals(Mover.class)) now = levelData[gridX][gridY].click();
+            boolean isMover = hud.selected().equals(Mover.class);
+
+            if (!hold || (hud.selected() == null || isMover)) now = levelData[gridX][gridY].click();
 
             if (latest != null) {
                 double dist = new Position(mouseX, mouseY).distanceToPosition(latest.getPosition());
@@ -238,11 +214,15 @@ public class Level {
                         if (latest.getY() < mouseY) latest.setDirection(Direction.SOUTH);
                         else latest.setDirection(Direction.NORTH);
                     }
-                    if (now != null) now.setDirection(latest.direction);
+                    if (now != null) {
+                        now.setDirection(latest.direction);
+                    }
                 }
             }
 
-            if (now != null) latest = now;
+            if (now != null) {
+                latest = now;
+            }
 
         }
         else hud.click(mouseX, mouseY);
@@ -275,8 +255,31 @@ public class Level {
     }
 
     private void nextLevel() {
-        inList.get(levelIndex).activateSender();
-        outList.get(levelIndex).activateSender();
-        levelIndex += 1;
+
+        if (unUsedIn.size() == 0 || unUsedOut.size() == 0) return;
+
+        boolean international;
+        Type mailType;
+
+        international = (levelIndex % 2 == 0);
+
+        if (levelIndex % 3 == 0) mailType = Type.BIG_BOX;
+        else if (levelIndex % 3 == 1) mailType = Type.SMALL_BOX;
+        else mailType = Type.LETTER;
+
+        int i = random.nextInt(unUsedIn.size());
+        unUsedIn.get(i).setPostType(international, mailType);
+        unUsedIn.get(i).activateSender();
+        unUsedIn.remove(i);
+
+        i = random.nextInt(unUsedOut.size());
+        unUsedOut.get(i).setPostType(international, mailType);
+        unUsedOut.get(i).activateSender();
+        unUsedOut.remove(i);
+
+
+        if (levelIndex < inList.size()) {
+            levelIndex += 1;
+        }
     }
 }
