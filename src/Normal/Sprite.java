@@ -49,6 +49,14 @@ public class Sprite {
     }
 
 
+    public void setImageIndex(int index) {
+        imageIndex = index;
+    }
+
+    public int getImageIndex() {
+       return (int) Math.floor(imageIndex);
+    }
+
     public void setImageSpeed(double imageSpeed) {
         this.imageSpeed = imageSpeed;
     }

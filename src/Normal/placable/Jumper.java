@@ -44,7 +44,7 @@ public class Jumper extends Placeable {
         }
 
         if (target.moveMaid(list, direction)) {
-            tile.actualMove(target);
+            tile.actualMove(target, direction);
             sprite.setImageSpeed(0.5);
         }
     }

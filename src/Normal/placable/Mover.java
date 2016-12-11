@@ -15,8 +15,6 @@ import java.util.List;
 
 public class Mover extends Placeable {
 
-    private static final int MOVE_AMOUNT = 50;
-
     public Mover(int x, int y) {
         super(new Sprite("mover", 50), new Position(x, y));
     }
@@ -24,9 +22,7 @@ public class Mover extends Placeable {
     @Override
     public void sense(Collection<Mail> sensed, Tile tile) {
         if (sensed.size() == 0) return;
-
         List<Tile> list = new ArrayList<>();
-
         tile.moveMaid(list, getDirection());
     }
 

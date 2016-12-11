@@ -27,8 +27,12 @@ public class Tile extends Entity {
     private Image wantImage = null;
     private boolean active = false;
     private int score = 0;
+    private int scoreMax = 3;
+    private int wantOffset = 110;
 
     private Class<? extends Placeable> type;
+    private Color goodColor = Library.hsvColor(70, 200, 200);
+    private Color badColor = Library.hsvColor(240, 200, 200);
 
     public Tile(BufferedImage image, int x, int y, int width, int height, boolean ingoing) {
         super(new Sprite(image, 50, 50), new Position(x, y), new Dimension(width, height));
@@ -95,25 +99,32 @@ public class Tile extends Entity {
     public void setPostType(boolean international, Type letterType) {
         this.international = international;
         this.letterType = letterType;
-        if (!ingoing) {
-            int xx, yy;
-            if (international) {
-                yy = 100;
-            } else yy = 0;
 
-            switch (letterType) {
-                case SMALL_BOX:
-                    xx = 100;
-                    break;
-                case BIG_BOX:
-                    xx = 200;
-                    break;
-                default:
-                    xx = 0;
-            }
+        int xx, yy;
+        if (international) {
+            yy = 100;
+        } else yy = 0;
 
-            wantImage = Library.loadTile("want", xx, yy, 100, 100);
+        switch (letterType) {
+            case SMALL_BOX:
+                xx = 100;
+                break;
+            case BIG_BOX:
+                xx = 200;
+                break;
+            default:
+                xx = 0;
         }
+
+        if (direction.equals(Direction.NORTH))  {
+            wantImage = Library.loadTile("wantNorth", xx, yy, 100, 100);
+            wantOffset = 10;
+        }
+        else {
+            wantImage = Library.loadTile("want", xx, yy, 100, 100);
+            wantOffset = -110;
+        }
+
     }
 
     public void activateSender() {
@@ -136,21 +147,31 @@ public class Tile extends Entity {
                         case LETTER:    mail = new Letter(getX(), getY(), international);   break;
                         case SMALL_BOX: mail = new SmallBox(getX(), getY(), international); break;
                         case BIG_BOX:   mail = new BigBox(getX(), getY(), international);   break;
-                        default: mail = new Letter(getX(), getY(), international);  break;
+                        default: mail = new Letter(getX(), getY(), international);          break;
                     }
-                    newOnTop.add(mail);
-                    newMail();
+
+                    List list = new ArrayList<Tile>();
+                    list.add(this);
+                    onTop.add(mail);
+                    if (neighbours.get(direction).moveMaid(list, direction)) {
+                        actualMove(direction);
+                    }
+                    else onTop.remove(mail);
                     timer.restart();
                 }
             }
             else {
+                sprite.setImageIndex(0);
                 if (hasMail()) {
                     for (Mail m: onTop) {
                         if (m.getType() == letterType && m.getInternational() == international) {
                             score ++;
-                            System.out.println("score");
+                            sprite.setImageIndex(2);
                         }
-                        else System.out.println("we");
+                        else {
+                            sprite.setImageIndex(1);
+                            score = Math.max(0, score - 1);
+                        }
                     }
                     onTop.clear();
                 }
@@ -227,9 +248,19 @@ public class Tile extends Entity {
     }
 
     public void drawWant(Graphics g) {
-        if (special && !ingoing && active) {
-            DrawFunctions.drawImage(g, wantImage, getX() - 50, getY() - 110);
+        if (special && active) {
+            DrawFunctions.drawImage(g, wantImage, getX() - 50, getY() + wantOffset);
+            if (!ingoing) {
+                int width = getWidth() / scoreMax;
+                for (int i = 0; i < scoreMax; i++) {
+
+                    if (i < score) g.setColor(goodColor);
+                    else g.setColor(badColor);
+                    g.fillOval(getX() - getWidth() / 2 + i * width, getY() + wantOffset, width, width);
+                }
+            }
         }
+
     }
     public void addNeighbours(Direction direction, Tile tile) {
         neighbours.put(direction, tile);
@@ -240,10 +271,10 @@ public class Tile extends Entity {
     }
 
     public void actualMove(Direction direction) {
-        actualMove(neighbours.get(direction));
+        actualMove(neighbours.get(direction), direction);
     }
 
-    public void actualMove(Tile neighbour) {
+    public void actualMove(Tile neighbour, Direction direction) {
         if (neighbour != null) {
             onTop.forEach(m -> {
                 m.setDirection(direction);
@@ -303,6 +334,7 @@ public class Tile extends Entity {
 
             if (goTo.hasNewMail()) return false;
         }
+        else return false;
 
         actualMove(direction);
         return true;
