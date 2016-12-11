@@ -36,8 +36,8 @@ public class Level {
     private Random random = new Random();
 
 
-    public void setPlay(boolean play) {
-        this.play = play;
+    public void togglePlay() {
+        play = !play;
     }
 
     public Level(String path, HUD.ChangeCursorListener cursorListener) {
