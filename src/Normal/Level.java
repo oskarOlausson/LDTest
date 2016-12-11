@@ -4,7 +4,7 @@ package Normal;
 import JSON.JsonParser;
 import JSON.Tileset;
 import JSON.Wrapper;
-import Normal.hud.HUD;
+import Normal.hud.*;
 import Normal.mail.Type;
 import Normal.placable.Mover;
 
@@ -34,7 +34,6 @@ public class Level {
     private int tickCounter = 0;
     private Entity latest = null;
     private Random random = new Random();
-
 
     public void togglePlay() {
         play = !play;
@@ -93,7 +92,7 @@ public class Level {
         }
         hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0,
                 Constants.HUD_WIDTH.value, Constants.HEIGHT.value,
-                cursorListener);
+                cursorListener, this);
 
         unUsedIn = new ArrayList<>(inList);
         unUsedOut = new ArrayList<>(outList);
