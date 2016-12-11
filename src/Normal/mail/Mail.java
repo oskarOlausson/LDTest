@@ -67,8 +67,8 @@ public abstract class Mail extends Entity {
         }
 
         sprite.update();
-        double animX = 0.8 * animation.getX() + 0.2 * getX();
-        double animY = 0.8 * animation.getY() + 0.2 * getY();
+        double animX = 0.9 * animation.getX() + 0.1 * getX();
+        double animY = 0.9 * animation.getY() + 0.1 * getY();
         animation.update(animX, animY);
 
 
@@ -106,7 +106,8 @@ public abstract class Mail extends Entity {
     }
 
     public void drawShadow(Graphics g) {
-        DrawFunctions.drawImage(g, shadow, animation.getDrawX(), animation.getDrawY(), scaleX, scaleY, directionNumberAnimate);
+
+        DrawFunctions.drawImage(g, shadow, (int) (animation.getDrawX() + 2 * scaleX), (int) (animation.getDrawY() + 2 * scaleY), 1, 1, directionNumberAnimate);
     }
 
     @Override

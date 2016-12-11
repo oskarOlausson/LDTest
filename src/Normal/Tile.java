@@ -350,7 +350,9 @@ public class Tile extends Entity {
 
     public void drawShadows(Graphics g) {
 
-        onTop.forEach(m -> drawShadows(g));
+        for (Mail m: onTop) {
+            m.drawShadow(g);
+        }
 
     }
 }

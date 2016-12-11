@@ -29,10 +29,16 @@ public class Level {
     private HUD hud;
     private List<Decoration> decor = new ArrayList<>();
     private int levelIndex = 0;
+    private boolean play = false;
 
     private int tickCounter = 0;
     private Entity latest = null;
     private Random random = new Random();
+
+
+    public void setPlay(boolean play) {
+        this.play = play;
+    }
 
     public Level(String path, HUD.ChangeCursorListener cursorListener) {
         JsonParser t = new JsonParser();
@@ -134,6 +140,8 @@ public class Level {
 
     public void step() {
 
+        if (!play) return;
+
         for (Tile[] tileRow : levelData) {
             for (Tile tile : tileRow) {
                 if (tile != null) {
@@ -175,10 +183,10 @@ public class Level {
                 for (Tile tile : tileRow) {
                     if (tile != null) {
                         if (i == 0) {
-                            tile.drawShadows(g);
+                            tile.draw(g);
                         }
-                        if (i == 1) tile.draw(g);
-                        else if (i == 2) tile.drawPlaced(g);
+                        if (i == 1) tile.drawPlaced(g);
+                        else if (i == 2) tile.drawShadows(g);
                         else if (i == 3) tile.drawOnTop(g);
                         else {
                             tile.drawWant(g);
@@ -266,7 +274,7 @@ public class Level {
 
         international = (levelIndex % 2 == 0);
 
-        if (levelIndex % 3 == 0) mailType = Type.BIG_BOX;
+        if (levelIndex % 3 == 2) mailType = Type.BIG_BOX;
         else if (levelIndex % 3 == 1) mailType = Type.SMALL_BOX;
         else mailType = Type.LETTER;
 
