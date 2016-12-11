@@ -5,7 +5,6 @@
  */
 package Normal.hud;
 
-import Normal.Constants;
 import Normal.Library;
 import Normal.placable.Jumper;
 import Normal.placable.Mover;
@@ -36,12 +35,19 @@ public class HUD {
         this.y = y;
         this.cursorListener = cursorListener;
 
-        selected = new Button("mover", Mover.class, 25, 25, Constants.HUD_WIDTH.value, 50);
+
+        int startY = 100;
+        int startX = 50;
+        selected = new Button("mover", Mover.class, startX, startY, 50, 50);
         buttons.add(selected);
-        buttons.add(new Button("spinner", Mover.class, 25, 75, Constants.HUD_WIDTH.value, 50));
-        buttons.add(new Button("switch", Switch.class, 25, 125, Constants.HUD_WIDTH.value, 50));
-        buttons.add(new Button("jumper", Jumper.class, 25, 175, Constants.HUD_WIDTH.value, 50));
-        buttons.add(new Button("mover", null, 25, 320, Constants.HUD_WIDTH.value, 50));
+        startY++;
+        buttons.add(new Button("spinner", Mover.class, startX, startY+75, 50, 50));
+        startY++;
+        buttons.add(new Button("switch", Switch.class, startX, startY+75*2, 50, 50));
+        startY++;
+        buttons.add(new Button("jumper", Jumper.class, startX, startY+75*3, 50, 50));
+        startY++;
+        buttons.add(new Button("bulldozer", null, startX, startY+75*6, 50, 50));
     }
 
     public void click(int mouseX, int mouseY) {
@@ -65,10 +71,10 @@ public class HUD {
         buttons.forEach(button -> {
             if (button.equals(selected)) {
                 g.setColor(Color.cyan);
-                g.draw3DRect(x+button.getPosition().getDrawX()-(int)button.getSize().getWidth()/2-1,
-                             y+button.getPosition().getDrawY()-(int)button.getSize().getHeight()/2-1,
-                             (int)button.getSize().getWidth(),
-                             (int)button.getSize().getHeight(), false);
+                g.draw3DRect(x+button.getPosition().getDrawX()-(int)button.getSize().getWidth()*3/4,
+                             y+button.getPosition().getDrawY()-(int)button.getSize().getHeight()*3/4,
+                             (int)(button.getSize().getWidth()*1.5),
+                             (int)(button.getSize().getHeight()*1.5), false);
             }
             button.draw(g, x, y);
         });
