@@ -5,11 +5,8 @@
  */
 package Normal.mail;
 
-import Normal.DrawFunctions;
 import Normal.Position;
 import Normal.Sprite;
-
-import java.awt.*;
 
 public class SmallBox extends Mail {
 
@@ -21,11 +18,6 @@ public class SmallBox extends Mail {
         String path = "smallBoxIn";
         if (international) path = "smallBoxOut";
         setSprite(new Sprite(path));
-    }
-
-    @Override
-    public void tick() {
-        animate();
     }
 
     @Override

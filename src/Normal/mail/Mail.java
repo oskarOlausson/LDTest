@@ -8,7 +8,6 @@ package Normal.mail;
 import Normal.DrawFunctions;
 import Normal.Entity;
 import Normal.Position;
-import Normal.Sprite;
 
 import java.awt.*;
 
@@ -20,6 +19,12 @@ public abstract class Mail extends Entity {
     protected double directionNumber;
     protected double directionNumberAnimate;
 
+    private double scaleX = 1;
+    private double scaleY = 1;
+
+    private boolean isFlaying;
+    private Position startFlyPosition;
+
     public Mail(Position position) {
         super(position);
         animation = position.copy();
@@ -28,6 +33,11 @@ public abstract class Mail extends Entity {
     public boolean isInternational() { return international; }
 
     public abstract Type getType();
+
+    @Override
+    public void tick() {
+        animate();
+    }
 
     public void animate() {
         directionNumber = direction.toRad();
@@ -53,12 +63,45 @@ public abstract class Mail extends Entity {
         double animX = 0.8 * animation.getX() + 0.2 * getX();
         double animY = 0.8 * animation.getY() + 0.2 * getY();
         animation.update(animX, animY);
+
+
+        flyingAnimation();
+    }
+
+    private void flyingAnimation() {
+        if (isFlaying) {
+            if (animation.distanceToPosition(getPosition()) < 10) {
+                isFlaying = false;
+                scaleX = 1;
+                scaleY = 1;
+            } else {
+                double scale;
+                double totalLenght = getPosition().distanceToPosition(startFlyPosition);
+                double currentLength = animation.distanceToPosition(startFlyPosition);
+
+                if (currentLength > totalLenght/2) {
+                    currentLength -= totalLenght/2;
+                    scale = (totalLenght/2 - currentLength)/(totalLenght/2)+1;
+                } else {
+                    scale = (totalLenght/2 + currentLength)/(totalLenght/2);
+                }
+
+                scale = Math.sqrt(scale);
+                scaleX = scale;
+                scaleY = scale;
+            }
+        }
+    }
+
+    public void setFlying(Position startPosition) {
+        isFlaying = true;
+        startFlyPosition = startPosition;
     }
 
     @Override
     public void draw(Graphics g) {
 
-        DrawFunctions.drawImage(g, getImage(), animation.getDrawX(), animation.getDrawY(), 1, 1, directionNumberAnimate);
+        DrawFunctions.drawImage(g, getImage(), animation.getDrawX(), animation.getDrawY(), scaleX, scaleY, directionNumberAnimate);
     }
 
     public boolean getInternational() {

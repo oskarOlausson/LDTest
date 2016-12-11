@@ -23,11 +23,6 @@ public class Letter extends Mail {
     }
 
     @Override
-    public void tick() {
-        animate();
-    }
-
-    @Override
     public void step() {
 
     }

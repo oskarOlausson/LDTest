@@ -14,7 +14,7 @@ public class ImageRes {
 
     public ImageRes(String string) {
 
-        string = "../" + string;
+        string = "/" + string;
 
         if (!string.substring(string.length() - 4, string.length() - 3).equals(".")) {
             string += fileEnd;

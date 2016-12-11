@@ -27,16 +27,27 @@ public class Jumper extends Placeable {
     public void sense(Collection<Mail> sensed, Tile tile) {
         if (sensed.size() == 0) return;
 
+
         List<Tile> list = new ArrayList<>();
         list.add(tile);
 
         Tile target = tile.getNeighbours().get(direction);
+
+        if (target == null) {
+            return;
+        }
+
         Type t = new ArrayList<>(sensed).get(0).getType();
 
         if (t == Type.BIG_BOX || t == Type.SMALL_BOX) {
-            target = target.getNeighbours().get(direction);
+            Tile target2 = target.getNeighbours().get(direction);
+
+            if (target2 != null) {
+                target = target2;
+            }
+
             if (t == Type.SMALL_BOX) {
-                Tile target2 = target.getNeighbours().get(direction);
+                target2 = target.getNeighbours().get(direction);
                 if (target2 != null) {
                     target = target2;
                 }
@@ -44,6 +55,7 @@ public class Jumper extends Placeable {
         }
 
         if (target.moveMaid(list, direction)) {
+            sensed.forEach(mail -> mail.setFlying(getPosition()));
             tile.actualMove(target, direction);
             sprite.setImageSpeed(0.5);
         }
