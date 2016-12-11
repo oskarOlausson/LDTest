@@ -6,39 +6,52 @@
 package Normal.hud;
 
 import Normal.Constants;
+import Normal.Library;
 import Normal.placable.Mover;
 import Normal.placable.Placeable;
 import Normal.placable.Switch;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HUD {
 
 
+    public interface ChangeCursorListener {
+        void onChange(Image image);
+    }
+
 
     private List<Button> buttons = new ArrayList<>();
     private int x;
     private int y;
     private Button selected;
+    private ChangeCursorListener cursorListener;
+    private Image bulldozerCursor = Library.loadImage("bulldozer_cursor");
 
-    public HUD(int x, int y) {
+    public HUD(int x, int y, ChangeCursorListener cursorListener) {
         this.x = x;
         this.y = y;
+        this.cursorListener = cursorListener;
 
         selected = new Button("mover", Mover.class, 25, 25, Constants.HUD_WIDTH.value, 50);
         buttons.add(selected);
         buttons.add(new Button("spinner", Mover.class, 25, 75, Constants.HUD_WIDTH.value, 50));
         buttons.add(new Button("switch", Switch.class, 25, 125, Constants.HUD_WIDTH.value, 50));
         buttons.add(new Button("jumper", Mover.class, 25, 175, Constants.HUD_WIDTH.value, 50));
+        buttons.add(new Button("mover", null, 25, 320, Constants.HUD_WIDTH.value, 50));
     }
 
     public void click(int mouseX, int mouseY) {
         for (Button button : buttons) {
             if (button.inside(mouseX-x, mouseY-y)) {
                 selected = button;
+                if (selected.getType() == null) {
+                    cursorListener.onChange(bulldozerCursor);
+                } else {
+                    cursorListener.onChange(null);
+                }
             }
         }
     }

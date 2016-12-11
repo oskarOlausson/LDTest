@@ -1,6 +1,5 @@
 package Normal;
 
-import Normal.mail.BigBox;
 import Normal.mail.Letter;
 import Normal.mail.Mail;
 import Normal.placable.Placeable;
@@ -142,16 +141,20 @@ public class Tile extends Entity {
     }
 
     private Placeable createPlacable() {
-        try {
-            return type.getDeclaredConstructor(int.class, int.class).newInstance(position.getDrawX(), position.getDrawY());
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        if (type == null) {
+            placed = null;
+        } else {
+            try {
+                return type.getDeclaredConstructor(int.class, int.class).newInstance(position.getDrawX(), position.getDrawY());
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

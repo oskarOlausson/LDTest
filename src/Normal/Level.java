@@ -29,7 +29,7 @@ public class Level {
     private int tickCounter = 0;
     private Entity latest = null;
 
-    public Level(String path) {
+    public Level(String path, HUD.ChangeCursorListener cursorListener) {
         JsonParser t = new JsonParser();
         wrapper = t.loadJSON(path);
         Wrapper.Layer l = wrapper.getLayer(1);
@@ -75,7 +75,7 @@ public class Level {
                 yy += 1;
             }
         }
-        hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0);
+        hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0, cursorListener);
     }
 
     private void linkTilesWithNeighours() {
@@ -169,7 +169,7 @@ public class Level {
 
             levelData[gridX][gridY].setPlacableType(hud.selected());
 
-            if (!hold || hud.selected().equals(Mover.class)) now = levelData[gridX][gridY].click();
+            if (!hold || (hud.selected() != null && hud.selected().equals(Mover.class))) now = levelData[gridX][gridY].click();
 
             if (latest != null) {
                 double dist = new Position(mouseX, mouseY).distanceToPosition(latest.getPosition());
