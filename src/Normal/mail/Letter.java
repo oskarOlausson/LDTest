@@ -37,9 +37,5 @@ public class Letter extends Mail {
         return Type.LETTER;
     }
 
-    @Override
-    public void draw(Graphics g) {
 
-        DrawFunctions.drawImage(g, getImage(), animation.getDrawX(), animation.getDrawY(), 1, 1, direction.toRad());
-    }
 }

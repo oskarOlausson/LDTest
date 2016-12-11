@@ -13,6 +13,7 @@ public class Sprite {
     private BufferedImage[] img;
     private double imageSpeed = .1;
     private double imageIndex = 0;
+    private boolean looped;
 
     public Sprite(String imagePath) {
         img = new BufferedImage[1];
@@ -34,6 +35,15 @@ public class Sprite {
         imageSpeed = 0;
     }
 
+    public boolean looped() {
+        return looped;
+    }
+
+    public void pause() {
+        imageIndex = 0;
+        imageSpeed = 0;
+    }
+
     public Sprite(BufferedImage image, int width, int height) {
         img = Library.loadSprite(image, width, height);
     }
@@ -44,6 +54,7 @@ public class Sprite {
     }
 
     public void update() {
+        boolean nowLoop = false;
         if (imageSpeed != 0) {
             imageIndex += imageSpeed;
 
@@ -51,13 +62,16 @@ public class Sprite {
 
             if (floored >= img.length) {
                 imageIndex -= img.length;
+                nowLoop = true;
             }
 
             if (floored < 0) {
                 imageIndex += img.length;
+                nowLoop = true;
             }
         }
-        //TODO, fix
+
+        looped = nowLoop;
         if (imageIndex < 0 || imageIndex >= img.length) throw new AssertionError();
     }
 

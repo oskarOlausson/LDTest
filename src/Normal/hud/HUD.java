@@ -6,12 +6,9 @@
 package Normal.hud;
 
 import Normal.Constants;
-import Normal.placable.Mover;
-import Normal.placable.Placeable;
-import Normal.placable.Switch;
+import Normal.placable.*;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +29,7 @@ public class HUD {
         buttons.add(selected);
         buttons.add(new Button("spinner", Mover.class, 25, 75, Constants.HUD_WIDTH.value, 50));
         buttons.add(new Button("switch", Switch.class, 25, 125, Constants.HUD_WIDTH.value, 50));
-        buttons.add(new Button("jumper", Mover.class, 25, 175, Constants.HUD_WIDTH.value, 50));
+        buttons.add(new Button("jumper", Jumper.class, 25, 175, Constants.HUD_WIDTH.value, 50));
     }
 
     public void click(int mouseX, int mouseY) {

@@ -5,6 +5,7 @@ import JSON.JsonParser;
 import JSON.Tileset;
 import JSON.Wrapper;
 import Normal.hud.HUD;
+import Normal.mail.Type;
 import Normal.placable.Mover;
 
 import java.awt.*;
@@ -19,6 +20,8 @@ import java.util.function.Consumer;
  */
 public class Level {
 
+    private final List<Tile> outList = new ArrayList<>();
+    private final List<Tile> inList = new ArrayList<>();
     private Tile[][] levelData;
     private Wrapper wrapper;
     private HUD hud;
@@ -41,14 +44,17 @@ public class Level {
 
         int xx = 0;
         int yy = 0;
+        Tile specialTile;
         for (int i = 0; i < data.length; i++) {
             if (data[i] == 0) {
                 levelData[xx][yy] = null;
             } else {
                 switch(data[i]) {
-                    case 5: levelData[xx][yy] = new Tile(Library.loadImage("input"), (int) ((xx + 0.5) * ts.getTileWidth()), (int) ((yy + 0.5) * ts.getTileHeight()), ts.getTileWidth(), ts.getTileHeight(), true);
+                    case 5: specialTile = levelData[xx][yy] = new Tile(Library.loadImage("input"), (int) ((xx + 0.5) * ts.getTileWidth()), (int) ((yy + 0.5) * ts.getTileHeight()), ts.getTileWidth(), ts.getTileHeight(), true);
+                        inList.add(specialTile);
                         break;
-                    case 6: levelData[xx][yy] = new Tile(Library.loadImage("output"), (int) ((xx + 0.5) * ts.getTileWidth()), (int) ((yy + 0.5) * ts.getTileHeight()), ts.getTileWidth(), ts.getTileHeight(), false);
+                    case 6: specialTile = levelData[xx][yy] = new Tile(Library.loadImage("output"), (int) ((xx + 0.5) * ts.getTileWidth()), (int) ((yy + 0.5) * ts.getTileHeight()), ts.getTileWidth(), ts.getTileHeight(), false);
+                        outList.add(specialTile);
                         break;
                     default: levelData[xx][yy] = new Tile(ts.getImage(data[i]), (int) ((xx + 0.5) * ts.getTileWidth()), (int) ((yy + 0.5) * ts.getTileHeight()), ts.getTileWidth(), ts.getTileHeight());
                 }
@@ -62,6 +68,42 @@ public class Level {
         linkTilesWithNeighours();
         l = wrapper.getLayer(0);
         data = l.getData();
+
+        boolean international;
+        Type letterType;
+        for (int i = 0; i < outList.size(); i++) {
+            if (i % 3 == 0) {
+                letterType = Type.LETTER;
+            }
+            else if (i % 3 == 1) {
+                letterType = Type.SMALL_BOX;
+            }
+            else letterType = Type.BIG_BOX;
+
+            if (i % 2 == 0) {
+                international = true;
+            }
+            else international = false;
+
+            outList.get(i).setPostType(international, letterType);
+        }
+
+        for (int i = 0; i < inList.size(); i++) {
+            if (i % 3 == 0) {
+                letterType = Type.LETTER;
+            }
+            else if (i % 3 == 1) {
+                letterType = Type.SMALL_BOX;
+            }
+            else letterType = Type.BIG_BOX;
+
+            if (i % 2 == 0) {
+                international = true;
+            }
+            else international = false;
+
+            inList.get(i).setPostType(international, letterType);
+        }
 
         xx = 0;
         yy = 0;
@@ -130,20 +172,27 @@ public class Level {
     }
 
     public void draw(Graphics g) {
-        for (int i = 0; i < 3; i ++) {
+
+
+        decor.forEach(wall -> wall.draw(g));
+
+        for (int i = 0; i < 4; i ++) {
             for (Tile[] tileRow : levelData) {
                 for (Tile tile : tileRow) {
                     if (tile != null) {
                         if (i == 0) tile.draw(g);
                         else if (i == 1) tile.drawPlaced(g);
-                        else tile.drawOnTop(g);
+                        else if (i == 2) tile.drawOnTop(g);
+                        else {
+                            tile.drawWant(g);
+                        }
                     }
                 }
             }
         }
 
-        decor.forEach(wall -> wall.draw(g));
-        entities.forEach(entity -> entity.draw(g));
+
+
         hud.draw(g);
 
     }

@@ -1,8 +1,6 @@
 package Normal;
 
-import Normal.mail.BigBox;
-import Normal.mail.Letter;
-import Normal.mail.Mail;
+import Normal.mail.*;
 import Normal.placable.Placeable;
 
 import java.awt.*;
@@ -24,6 +22,10 @@ public class Tile extends Entity {
     private boolean special = false;
     private boolean ingoing = false;
     private Timer timer;
+    private boolean international = false;
+    private Type letterType = Type.LETTER;
+    private Image wantImage = null;
+    private boolean senderActive = false;
 
 
     private Class<? extends Placeable> type;
@@ -40,6 +42,10 @@ public class Tile extends Entity {
 
     public boolean hasMail() {
         return (!onTop.isEmpty());
+    }
+
+    public boolean hasNewMail() {
+        return !(newOnTop.isEmpty());
     }
 
     public Tile(BufferedImage image, int x, int y, int width, int height) {
@@ -86,13 +92,53 @@ public class Tile extends Entity {
         }
     }
 
+    public void setPostType(boolean international, Type letterType) {
+        this.international = international;
+        this.letterType = letterType;
+        if (!ingoing) {
+            int xx, yy;
+            if (international) {
+                yy = 100;
+            } else yy = 0;
+
+            switch (letterType) {
+                case SMALL_BOX:
+                    xx = 100;
+                    break;
+                case BIG_BOX:
+                    xx = 200;
+                    break;
+                default:
+                    xx = 0;
+            }
+
+            wantImage = Library.loadTile("want", xx, yy, 100, 100);
+        }
+    }
+
+    public void activateSender() {
+        senderActive = true;
+    }
+
+    public void deActivateSender() {
+        senderActive = false;
+    }
+
     @Override
     public void step() {
         if (special) {
             if (ingoing) {
                 timer.update();
-                if (timer.isDone()) {
-                    newOnTop.add(new Letter(getX(), getY(),false));
+                if (timer.isDone() && senderActive) {
+                    Mail mail;
+
+                    switch(letterType) {
+                        case LETTER:    mail = new Letter(getX(), getY(), international);   break;
+                        case SMALL_BOX: mail = new SmallBox(getX(), getY(), international); break;
+                        case BIG_BOX:   mail = new BigBox(getX(), getY(), international);   break;
+                        default: mail = new Letter(getX(), getY(), international);  break;
+                    }
+                    newOnTop.add(mail);
                     newMail();
                     timer.restart();
                 }
@@ -168,6 +214,12 @@ public class Tile extends Entity {
     public void drawOnTop(Graphics g) {
         onTop.forEach(entity -> entity.draw(g));
     }
+
+    public void drawWant(Graphics g) {
+        if (special && !ingoing) {
+            DrawFunctions.drawImage(g, wantImage, getX() - 50, getY() - 110);
+        }
+    }
     public void addNeighbours(Direction direction, Tile tile) {
         neighbours.put(direction, tile);
     }
@@ -177,13 +229,16 @@ public class Tile extends Entity {
     }
 
     public void actualMove(Direction direction) {
-        Tile neighbour = neighbours.get(direction);
+        actualMove(neighbours.get(direction));
+    }
+
+    public void actualMove(Tile neighbour) {
         if (neighbour != null) {
             onTop.forEach(m -> {
                 m.setDirection(direction);
-                direction.addToPosition(m.getPosition(), getWidth());
+                m.getPosition().update(neighbour.getX(), neighbour.getY());
+                neighbour.addMail(m);
             });
-            onTop.forEach(neighbour::addMail);
             onTop.clear();
         }
         else System.err.println("Could not move");
@@ -197,11 +252,12 @@ public class Tile extends Entity {
 
         if (!tiles.contains(this)) {
             tiles.add(this);
-            Direction direction2;
-            Tile goTo;
+
+            Tile goTo = null;
             boolean success = false;
 
             if (placed != null) {
+                Direction direction2;
                 direction2 = placed.getDirection();
                 goTo = neighbours.get(direction2);
                 if (goTo == null) {
@@ -229,8 +285,11 @@ public class Tile extends Entity {
                     if (!goTo.moveMaid(tiles, direction)) return false;
                 }
             }
+
+            if (goTo.hasNewMail()) return false;
         }
-        else return false;
+
+
 
         actualMove(direction);
         return true;
