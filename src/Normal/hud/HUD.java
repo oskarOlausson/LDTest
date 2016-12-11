@@ -7,6 +7,7 @@ package Normal.hud;
 
 import Normal.Constants;
 import Normal.Library;
+import Normal.placable.Jumper;
 import Normal.placable.Mover;
 import Normal.placable.Placeable;
 import Normal.placable.Switch;
@@ -39,7 +40,7 @@ public class HUD {
         buttons.add(selected);
         buttons.add(new Button("spinner", Mover.class, 25, 75, Constants.HUD_WIDTH.value, 50));
         buttons.add(new Button("switch", Switch.class, 25, 125, Constants.HUD_WIDTH.value, 50));
-        buttons.add(new Button("jumper", Mover.class, 25, 175, Constants.HUD_WIDTH.value, 50));
+        buttons.add(new Button("jumper", Jumper.class, 25, 175, Constants.HUD_WIDTH.value, 50));
         buttons.add(new Button("mover", null, 25, 320, Constants.HUD_WIDTH.value, 50));
     }
 

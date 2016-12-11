@@ -38,8 +38,4 @@ public class BigBox extends Mail {
         return Type.SMALL_BOX;
     }
 
-    @Override
-    public void draw(Graphics g) {
-        DrawFunctions.drawImage(g, getImage(), animation.getDrawX(), animation.getDrawY(), 1, 1, direction.toRad());
-    }
 }
