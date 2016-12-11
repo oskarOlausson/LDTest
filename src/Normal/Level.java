@@ -202,9 +202,7 @@ public class Level {
 
             levelData[gridX][gridY].setPlacableType(hud.selected());
 
-            boolean isMover = hud.selected().equals(Mover.class);
-
-            if (!hold || (hud.selected() == null || isMover)) now = levelData[gridX][gridY].click();
+            if (!hold || (hud.selected() == null || hud.selected().equals(Mover.class))) now = levelData[gridX][gridY].click();
 
             if (latest != null) {
                 double dist = new Position(mouseX, mouseY).distanceToPosition(latest.getPosition());
