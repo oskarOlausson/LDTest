@@ -347,4 +347,10 @@ public class Tile extends Entity {
     public boolean isActive() {
         return active;
     }
+
+    public void drawShadows(Graphics g) {
+
+        onTop.forEach(m -> drawShadows(g));
+
+    }
 }

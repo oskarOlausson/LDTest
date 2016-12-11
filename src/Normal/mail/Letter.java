@@ -20,6 +20,7 @@ public class Letter extends Mail {
         String path = "postIn";
         if (international) path = "postOut";
         setSprite(new Sprite(path));
+        createShadow();
     }
 
     @Override

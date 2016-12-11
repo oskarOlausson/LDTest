@@ -18,6 +18,7 @@ public class SmallBox extends Mail {
         String path = "smallBoxIn";
         if (international) path = "smallBoxOut";
         setSprite(new Sprite(path));
+        createShadow();
     }
 
     @Override

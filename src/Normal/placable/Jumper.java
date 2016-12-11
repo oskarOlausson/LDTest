@@ -5,6 +5,7 @@
  */
 package Normal.placable;
 
+import Normal.Direction;
 import Normal.Position;
 import Normal.Sprite;
 import Normal.Tile;
@@ -13,6 +14,7 @@ import Normal.mail.Type;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 public class Jumper extends Placeable {
@@ -31,27 +33,10 @@ public class Jumper extends Placeable {
         List<Tile> list = new ArrayList<>();
         list.add(tile);
 
-        Tile target = tile.getNeighbours().get(direction);
+        Tile target = getGoTo(tile.getNeighbours(), new ArrayList<>(sensed));
 
         if (target == null) {
             return;
-        }
-
-        Type t = new ArrayList<>(sensed).get(0).getType();
-
-        if (t == Type.BIG_BOX || t == Type.SMALL_BOX) {
-            Tile target2 = target.getNeighbours().get(direction);
-
-            if (target2 != null) {
-                target = target2;
-            }
-
-            if (t == Type.SMALL_BOX) {
-                target2 = target.getNeighbours().get(direction);
-                if (target2 != null) {
-                    target = target2;
-                }
-            }
         }
 
         if (target.moveMaid(list, direction)) {
@@ -72,5 +57,20 @@ public class Jumper extends Placeable {
     @Override
     public void step() {
 
+    }
+
+    @Override
+    public Tile getGoTo(HashMap<Direction, Tile> neighbours, List<Mail> mail) {
+        Tile tile = neighbours.get(direction);
+        if (tile == null) return null;
+        if (mail.get(0).getType().equals(Type.BIG_BOX)) return tile;
+
+        Tile tile2 = tile.getNeighbours().get(direction);
+        if (tile2 == null) return tile;
+        if (mail.get(0).getType().equals(Type.SMALL_BOX)) return tile;
+
+        Tile tile3 = tile2.getNeighbours().get(direction);
+        if (tile3 == null) return tile2;
+        return tile3;
     }
 }

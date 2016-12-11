@@ -18,6 +18,7 @@ public class BigBox extends Mail {
         String path = "bigBoxIn";
         if (international) path = "bigBoxOut";
         setSprite(new Sprite(path));
+        createShadow();
     }
 
     @Override

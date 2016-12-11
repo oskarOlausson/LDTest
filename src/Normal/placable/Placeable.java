@@ -10,6 +10,7 @@ import Normal.mail.Mail;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public abstract class Placeable extends Entity {
 
@@ -24,4 +25,8 @@ public abstract class Placeable extends Entity {
 
     public abstract void sense(Collection<Mail> sensed,
                                Tile tile);
+
+    public Tile getGoTo(HashMap<Direction, Tile> neighbours, List<Mail> mail) {
+        return neighbours.get(direction);
+    }
 }

@@ -7,9 +7,11 @@ package Normal.mail;
 
 import Normal.DrawFunctions;
 import Normal.Entity;
+import Normal.Library;
 import Normal.Position;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public abstract class Mail extends Entity {
 
@@ -18,6 +20,7 @@ public abstract class Mail extends Entity {
     protected Position animation;
     protected double directionNumber;
     protected double directionNumberAnimate;
+    protected Image shadow;
 
     private double scaleX = 1;
     private double scaleY = 1;
@@ -28,6 +31,10 @@ public abstract class Mail extends Entity {
     public Mail(Position position) {
         super(position);
         animation = position.copy();
+    }
+
+    public void createShadow() {
+        shadow = Library.tint((BufferedImage) sprite.getImage(), 0, 0, 0, 1);
     }
 
     public boolean isInternational() { return international; }
@@ -98,9 +105,12 @@ public abstract class Mail extends Entity {
         startFlyPosition = startPosition;
     }
 
+    public void drawShadow(Graphics g) {
+        DrawFunctions.drawImage(g, shadow, animation.getDrawX(), animation.getDrawY(), scaleX, scaleY, directionNumberAnimate);
+    }
+
     @Override
     public void draw(Graphics g) {
-
         DrawFunctions.drawImage(g, getImage(), animation.getDrawX(), animation.getDrawY(), scaleX, scaleY, directionNumberAnimate);
     }
 

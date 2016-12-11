@@ -170,13 +170,16 @@ public class Level {
 
         decor.forEach(wall -> wall.draw(g));
 
-        for (int i = 0; i < 4; i ++) {
+        for (int i = 0; i < 5; i ++) {
             for (Tile[] tileRow : levelData) {
                 for (Tile tile : tileRow) {
                     if (tile != null) {
-                        if (i == 0) tile.draw(g);
-                        else if (i == 1) tile.drawPlaced(g);
-                        else if (i == 2) tile.drawOnTop(g);
+                        if (i == 0) {
+                            tile.drawShadows(g);
+                        }
+                        if (i == 1) tile.draw(g);
+                        else if (i == 2) tile.drawPlaced(g);
+                        else if (i == 3) tile.drawOnTop(g);
                         else {
                             tile.drawWant(g);
                         }
