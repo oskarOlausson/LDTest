@@ -5,19 +5,17 @@
  */
 package Normal.hud;
 
-import Normal.DrawFunctions;
-import Normal.Level;
-import Normal.Position;
-import Normal.Sprite;
+import Normal.*;
 
 import java.awt.*;
 
 public class Button {
 
-    private Sprite sprite;
-    private Dimension size;
-    private Position position;
-    private Level level;
+    protected Sprite sprite;
+    protected Dimension size;
+    protected Position position;
+    protected Level level;
+    protected Timer timer = new Timer(3);
 
     public Button(String image, int x, int y, int width, int height, Level level) {
         this.level = level;
@@ -36,9 +34,19 @@ public class Button {
                 (int)size.getWidth(), (int)size.getHeight());
     }
 
+    public void tick() {
+        timer.update();
+    }
+
     public void click() {
-        level.togglePlay();
-        sprite.update();
+
+        if (timer.isDone()) {
+            level.togglePlay();
+            if (level.getPlay()) sprite.setImageIndex(1);
+            else sprite.setImageIndex(0);
+        }
+
+        timer.restart();
     }
 
     public void draw(Graphics g, int x, int y) {

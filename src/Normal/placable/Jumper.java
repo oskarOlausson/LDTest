@@ -67,7 +67,7 @@ public class Jumper extends Placeable {
 
         Tile tile2 = tile.getNeighbours().get(direction);
         if (tile2 == null) return tile;
-        if (mail.get(0).getType().equals(Type.SMALL_BOX)) return tile;
+        if (mail.get(0).getType().equals(Type.SMALL_BOX)) return tile2;
 
         Tile tile3 = tile2.getNeighbours().get(direction);
         if (tile3 == null) return tile2;

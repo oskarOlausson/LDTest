@@ -122,7 +122,7 @@ public class Tile extends Entity {
         }
         else {
             wantImage = Library.loadTile("want", xx, yy, 100, 100);
-            wantOffset = -110;
+            wantOffset = -100;
         }
 
     }
@@ -209,7 +209,6 @@ public class Tile extends Entity {
         return null;
     }
 
-
     public void stepFinished() {
         onTop.addAll(newOnTop);
         newOnTop.clear();
@@ -258,13 +257,10 @@ public class Tile extends Entity {
                 double percent = score / (double) scoreMax;
 
                 g.setColor(badColor);
-                g.fillRect(getX() - getWidth() / 2, getY() + wantOffset, getWidth(), 20);
+                g.fillRect(getX() - getWidth() / 2, getY() + wantOffset, getWidth(), 10);
 
                 g.setColor(goodColor);
-                g.fillRect(getX() - getWidth() / 2, getY() + wantOffset, Math.min(getWidth(), (int) (getWidth() * percent)), 20);
-
-
-
+                g.fillRect(getX() - getWidth() / 2, getY() + wantOffset, Math.min(getWidth(), (int) (getWidth() * percent)), 10);
             }
         }
 
@@ -293,15 +289,13 @@ public class Tile extends Entity {
         else System.err.println("Could not move");
     }
 
-    public void addLetter(MouseEvent event) {
-        onTop.add(new Letter( position.getDrawX(), position.getDrawY(), true));
-    }
-
     public boolean moveMaid(List<Tile> tiles, Direction direction) {
 
         if (special) {
             return !ingoing;
         }
+
+        if (!hasMail()) return true;
 
         if (!tiles.contains(this)) {
             tiles.add(this);
@@ -347,19 +341,18 @@ public class Tile extends Entity {
         return true;
     }
 
-    public int getScore() {
-        return score;
-    }
-
     public boolean isActive() {
         return active;
     }
 
     public void drawShadows(Graphics g) {
-
         for (Mail m: onTop) {
             m.drawShadow(g);
         }
+    }
 
+    public void clear() {
+        onTop.clear();
+        newOnTop.clear();
     }
 }

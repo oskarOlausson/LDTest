@@ -34,11 +34,35 @@ public class Level {
     private int tickCounter = 0;
     private Entity latest = null;
     private Random random = new Random();
+    private TextBox tB = new TextBox("Direct the mail");
+    private Timer tBTimer = new Timer(Constants.SECOND .value* 3);
+    private boolean showTB = true;
 
+    public boolean getPlay() {
+        return play;
+    }
+
+    public void setPlay(boolean play) {
+        this.play = play;
+        if (play == false) {
+            deleteAll();
+        }
+    }
 
     public void togglePlay() {
         play = !play;
+
+        if (play == false) {
+            deleteAll();
+        }
+        else {
+            if (levelIndex != 1) {
+                tBTimer.ring();
+                System.out.println(levelIndex);
+            }
+        }
     }
+
 
     public Level(String path, HUD.ChangeCursorListener cursorListener) {
         JsonParser t = new JsonParser();
@@ -93,7 +117,7 @@ public class Level {
         }
         hud = new HUD(Constants.WIDTH.value-Constants.HUD_WIDTH.value, 0,
                 Constants.HUD_WIDTH.value, Constants.HEIGHT.value,
-                cursorListener);
+                cursorListener, this);
 
         unUsedIn = new ArrayList<>(inList);
         unUsedOut = new ArrayList<>(outList);
@@ -136,6 +160,14 @@ public class Level {
         }
 
         hud.tick();
+
+
+
+        tBTimer.update();
+        if (tBTimer.isDone()) {
+            showTB = false;
+        }
+
     }
 
     public void step() {
@@ -158,11 +190,11 @@ public class Level {
         }
 
         boolean success = true;
-        int threashHold = 3;
+
 
         for (Tile t: outList) {
             if (t.isActive()) {
-                if (t.getScore() < threashHold) {
+                if (!t.isDone()) {
                     success = false;
                 }
             }
@@ -170,12 +202,13 @@ public class Level {
 
         if (success) {
             nextLevel();
+            showTB = true;
+            tBTimer.restart();
+            tB.setString("Can you handle another job for us?\n(press play when ready)\n--------->");
         }
     }
 
     public void draw(Graphics g) {
-
-
         decor.forEach(wall -> wall.draw(g));
 
         for (int i = 0; i < 5; i ++) {
@@ -196,10 +229,10 @@ public class Level {
             }
         }
 
-
-
         hud.draw(g);
-
+        if (showTB) {
+            tB.draw(g, (Constants.WIDTH.value - Constants.HUD_WIDTH.value) / 2, Constants.HEIGHT.value / 2);
+        }
     }
 
     public void leftClick(int mouseX, int mouseY, boolean hold) {
@@ -215,7 +248,7 @@ public class Level {
 
             if (!hold || (hud.selected() == null || hud.selected().equals(Mover.class))) now = levelData[gridX][gridY].click();
 
-            if (latest != null) {
+            if (latest != null && hud.selected().equals(latest.getClass())) {
                 double dist = new Position(mouseX, mouseY).distanceToPosition(latest.getPosition());
                 if (dist < 60 && dist > 10) {
                     if (Math.abs(mouseX - latest.getX()) > Math.abs(mouseY - latest.getY())) {
@@ -240,11 +273,7 @@ public class Level {
     }
 
     public void rightClick(MouseEvent event) {
-        int gridX = event.getX()/50;
-        int gridY = event.getY()/50;
-        if (levelData[gridX][gridY] != null) {
-            levelData[gridX][gridY].addLetter(event);
-        }
+
     }
 
     private void addNeighbours(Tile[][] levelData, int xx, int yy) {
@@ -291,6 +320,18 @@ public class Level {
 
         if (levelIndex < inList.size()) {
             levelIndex += 1;
+        }
+
+        togglePlay();
+    }
+
+    public void deleteAll() {
+        for (Tile[] tileRow : levelData) {
+            for (Tile tile : tileRow) {
+                if (tile != null) {
+                    tile.clear();
+                }
+            }
         }
     }
 }

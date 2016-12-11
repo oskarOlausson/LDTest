@@ -58,8 +58,6 @@ public class HUD {
         startY++;
         select.add(new PlacableSelectable("bulldozer", null, startX, height-100, 50, 50));
 
-
-
         buttons.add(new Button("playPause", startX, height-200, 50, 50, level));
     }
 
@@ -83,7 +81,7 @@ public class HUD {
     }
 
     public void tick() {
-
+        buttons.forEach(Button::tick);
     }
 
     public void draw(Graphics g) {
