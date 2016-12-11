@@ -27,7 +27,7 @@ public class Tile extends Entity {
     private Image wantImage = null;
     private boolean active = false;
     private int score = 0;
-    private int scoreMax = 3;
+    private int scoreMax = 30;
     private int wantOffset = 110;
 
     private Class<? extends Placeable> type;
@@ -165,16 +165,17 @@ public class Tile extends Entity {
                 if (hasMail()) {
                     for (Mail m: onTop) {
                         if (m.getType() == letterType && m.getInternational() == international) {
-                            score ++;
+                            score = Math.min(score + 15, scoreMax);
                             sprite.setImageIndex(2);
                         }
                         else {
                             sprite.setImageIndex(1);
-                            score = Math.max(0, score - 1);
+                            score = Math.max(0, score - 10);
                         }
                     }
                     onTop.clear();
                 }
+                else score = Math.max(0, score - 1);
             }
         }
 
@@ -192,6 +193,9 @@ public class Tile extends Entity {
         });
     }
 
+    public boolean isDone() {
+        return score >= scoreMax;
+    }
 
     public HashMap<Direction, Tile> getNeighbours() {
         return neighbours;
@@ -251,13 +255,16 @@ public class Tile extends Entity {
         if (special && active) {
             DrawFunctions.drawImage(g, wantImage, getX() - 50, getY() + wantOffset);
             if (!ingoing) {
-                int width = getWidth() / scoreMax;
-                for (int i = 0; i < scoreMax; i++) {
+                double percent = score / (double) scoreMax;
 
-                    if (i < score) g.setColor(goodColor);
-                    else g.setColor(badColor);
-                    g.fillOval(getX() - getWidth() / 2 + i * width, getY() + wantOffset, width, width);
-                }
+                g.setColor(badColor);
+                g.fillRect(getX() - getWidth() / 2, getY() + wantOffset, getWidth(), 20);
+
+                g.setColor(goodColor);
+                g.fillRect(getX() - getWidth() / 2, getY() + wantOffset, Math.min(getWidth(), (int) (getWidth() * percent)), 20);
+
+
+
             }
         }
 

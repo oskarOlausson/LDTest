@@ -29,12 +29,23 @@ public class Level {
     private HUD hud;
     private List<Decoration> decor = new ArrayList<>();
     private int levelIndex = 0;
-    private boolean play = false;
+
+
+
+    private boolean play = true;
+    private boolean success = true;
 
     private int tickCounter = 0;
     private Entity latest = null;
     private Random random = new Random();
 
+    public void getPlay() {
+        play = !play;
+    }
+
+    public void setPlay(boolean play) {
+        this.play = play;
+    }
 
     public void togglePlay() {
         play = !play;
@@ -158,11 +169,10 @@ public class Level {
         }
 
         boolean success = true;
-        int threashHold = 3;
 
         for (Tile t: outList) {
             if (t.isActive()) {
-                if (t.getScore() < threashHold) {
+                if (!t.isDone()) {
                     success = false;
                 }
             }
@@ -267,7 +277,10 @@ public class Level {
 
     private void nextLevel() {
 
-        if (unUsedIn.size() == 0 || unUsedOut.size() == 0) return;
+        if (unUsedIn.size() == 0 || unUsedOut.size() == 0) {
+            success = true;
+            return;
+        }
 
         boolean international;
         Type mailType;
