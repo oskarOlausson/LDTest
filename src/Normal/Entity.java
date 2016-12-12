@@ -1,7 +1,6 @@
 package Normal;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 
 /**
  * For easy object creation, make this

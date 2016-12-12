@@ -37,8 +37,6 @@ public abstract class Mail extends Entity {
         shadow = Library.tint((BufferedImage) sprite.getImage(), 0, 0, 0, 1);
     }
 
-    public boolean isInternational() { return international; }
-
     public abstract Type getType();
 
     @Override
@@ -106,7 +104,6 @@ public abstract class Mail extends Entity {
     }
 
     public void drawShadow(Graphics g) {
-
         DrawFunctions.drawImage(g, shadow, (int) (animation.getDrawX() + 2 * scaleX), (int) (animation.getDrawY() + 2 * scaleY), 1, 1, directionNumberAnimate);
     }
 

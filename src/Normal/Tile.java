@@ -4,7 +4,6 @@ import Normal.mail.*;
 import Normal.placable.Placeable;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -30,6 +29,8 @@ public class Tile extends Entity {
     private int scoreMax = 30;
     private int wantOffset = 110;
 
+    private List<Sound> sounds = new ArrayList<>();
+
     private Class<? extends Placeable> type;
     private Color goodColor = Library.hsvColor(70, 200, 200);
     private Color badColor = Library.hsvColor(240, 200, 200);
@@ -42,6 +43,12 @@ public class Tile extends Entity {
             this.ingoing = true;
             timer = new Timer(5);
         }
+        sounds.add(new Sound("a"));
+        sounds.add(new Sound("b"));
+        sounds.add(new Sound("c"));
+        sounds.add(new Sound("d"));
+        sounds.add(new Sound("e"));
+        sounds.add(new Sound("dark"));
     }
 
     public boolean hasMail() {
@@ -124,7 +131,6 @@ public class Tile extends Entity {
             wantImage = Library.loadTile("want", xx, yy, 100, 100);
             wantOffset = -100;
         }
-
     }
 
     public void activateSender() {
@@ -147,12 +153,13 @@ public class Tile extends Entity {
                         case LETTER:    mail = new Letter(getX(), getY(), international);   break;
                         case SMALL_BOX: mail = new SmallBox(getX(), getY(), international); break;
                         case BIG_BOX:   mail = new BigBox(getX(), getY(), international);   break;
-                        default: mail = new Letter(getX(), getY(), international);          break;
+                        default: mail =        new Letter(getX(), getY(), international);   break;
                     }
 
                     List list = new ArrayList<Tile>();
                     list.add(this);
                     onTop.add(mail);
+                    playSound(mail.getInternational(), mail.getType());
                     if (neighbours.get(direction).moveMaid(list, direction)) {
                         actualMove(direction);
                     }
@@ -165,8 +172,9 @@ public class Tile extends Entity {
                 if (hasMail()) {
                     for (Mail m: onTop) {
                         if (m.getType() == letterType && m.getInternational() == international) {
-                            score = Math.min(score + 15, scoreMax);
+                            score = Math.min(score + 15, scoreMax + 20);
                             sprite.setImageIndex(2);
+                            playSound(m.getInternational(), m.getType());
                         }
                         else {
                             sprite.setImageIndex(1);
@@ -191,6 +199,30 @@ public class Tile extends Entity {
                 neighbour.addMail(mail);
             }
         });
+    }
+
+    public void playSound(boolean international, Type type) {
+        int index = 0;
+
+        switch(type) {
+            case BIG_BOX:
+                index += 0;
+                break;
+            case SMALL_BOX:
+                index += 1;
+                break;
+            default:
+                index += 2;
+                break;
+        }
+        if (international) {
+            index += 3;
+        }
+
+        if (sounds.get(index).percentDone() > 50 || sounds.get(index).isPaused()) {
+
+            sounds.get(index).playFrom(0);
+        }
     }
 
     public boolean isDone() {
@@ -295,18 +327,18 @@ public class Tile extends Entity {
             return !ingoing;
         }
 
+        Tile goTo = null;
+
         if (!hasMail()) return true;
 
         if (!tiles.contains(this)) {
             tiles.add(this);
 
-            Tile goTo = null;
             boolean success = false;
 
             if (placed != null) {
-                Direction direction2;
-                direction2 = placed.getDirection();
-                goTo = neighbours.get(direction2);
+                Direction direction2 = placed.getDirection(getAMail());
+                goTo = placed.getGoTo(this, new ArrayList<>(onTop));
                 if (goTo == null) {
 
                 }
@@ -337,7 +369,7 @@ public class Tile extends Entity {
         }
         else return false;
 
-        actualMove(direction);
+        actualMove(goTo, direction);
         return true;
     }
 
@@ -354,5 +386,9 @@ public class Tile extends Entity {
     public void clear() {
         onTop.clear();
         newOnTop.clear();
+    }
+
+    public Mail getAMail() {
+        return new ArrayList<>(onTop).get(0);
     }
 }

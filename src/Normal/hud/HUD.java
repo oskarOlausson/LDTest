@@ -47,14 +47,12 @@ public class HUD {
 
         int startY = 100;
         int startX = 50;
-        selected = new PlacableSelectable("mover", Mover.class, startX, startY, 50, 50);
+        selected = new PlacableSelectable("mover2", Mover.class, startX, startY, 50, 50);
         select.add(selected);
         startY++;
-        select.add(new PlacableSelectable("spinner", Mover.class, startX, startY+75, 50, 50));
+        select.add(new PlacableSelectable("switch", Switch.class, startX, startY+75*1, 50, 50));
         startY++;
-        select.add(new PlacableSelectable("switch", Switch.class, startX, startY+75*2, 50, 50));
-        startY++;
-        select.add(new PlacableSelectable("jumper", Jumper.class, startX, startY+75*3, 50, 50));
+        select.add(new PlacableSelectable("jumper", Jumper.class, startX, startY+75*2, 50, 50));
         startY++;
         select.add(new PlacableSelectable("bulldozer", null, startX, height-100, 50, 50));
 

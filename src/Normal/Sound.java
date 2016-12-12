@@ -7,12 +7,14 @@ import javax.sound.sampled.FloatControl;
 
 public class Sound {
 
+    private String url;
     private Clip clip = null;
     private Thread t = null;
     private double volume = 0;
     private boolean play = false;
 
-    public Sound() {
+    public Sound(String url) {
+        this.url = url;
     }
 
     /**
@@ -29,10 +31,14 @@ public class Sound {
             if (clip.isActive()) clip.start();
             else playFrom(0);
         }
+        else {
+            loadSound();
+        }
     }
 
     public double percentDone() {
 
+        if (clip == null) return 100;
         return 100 * (clip.getFramePosition() / (double) clip.getFrameLength());
 
     }
@@ -44,8 +50,8 @@ public class Sound {
         if (clip != null) {
             clip.stop();
             clip.setFramePosition(0);
-            play();
         }
+        play();
     }
 
     /**
@@ -58,24 +64,9 @@ public class Sound {
             clip.setMicrosecondPosition((long) time * 1000);
             clip.start();
         }
-    }
-
-    /**
-     *
-     * @param percent 0 is no sound, 1 is all the sound (you can go slightly past if you are really need)
-     */
-    public void setVolume(double percent) {
-        volume = (1 - percent) * -80;
-        if (clip != null) {
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue((float) volume);
+        else {
+            loadSound();
         }
-    }
-
-    private void init() {
-        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        gainControl.setValue((float) volume);
-        if (!play) pause();
     }
 
     /**
@@ -83,7 +74,7 @@ public class Sound {
      * @param url
      * @return
      */
-    public synchronized Thread loadSound(String url) {
+    public synchronized Sound loadSound() {
 
         if (url.length() < 4 || !url.substring(url.length() - 4, url.length() - 3).equals(".")) {
             url += ".wav";
@@ -112,7 +103,64 @@ public class Sound {
 
         t.start();
 
-        return t;
+        return this;
     }
 
+    /**
+     *
+     * @param percent 0 is no sound, 1 is all the sound (you can go slightly past if you are really need)
+     */
+    public void setVolume(double percent) {
+        volume = (1 - percent) * -80;
+        if (clip != null) {
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue((float) volume);
+        }
+    }
+
+    private void init() {
+        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue((float) volume);
+    }
+
+    /**
+     * This loads the sounds
+     * @param url
+     * @return
+     */
+    public synchronized Sound loadSound(String url) {
+
+        if (url.length() < 4 || !url.substring(url.length() - 4, url.length() - 3).equals(".")) {
+            url += ".wav";
+        }
+
+        final String path = "../" + url;
+
+        t = new Thread(new Runnable() {
+
+            // The wrapper thread is unnecessary, unless it blocks on the
+            // Clip finishing; see comments.
+            public void run() {
+                try {
+                    clip = AudioSystem.getClip();
+                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+                            getClass().getResourceAsStream(path));
+                    clip.open(inputStream);
+                    clip.start();
+                    init();
+
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        });
+
+        t.start();
+
+        return this;
+    }
+
+    public boolean isPaused() {
+        return !play;
+    }
 }

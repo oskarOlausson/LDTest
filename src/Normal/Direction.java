@@ -61,4 +61,19 @@ public enum Direction {
         }
         return 0; // won't happen
     }
+
+    public Direction turnCounter() {
+        switch(this) {
+            case NORTH:
+                return WEST;
+            case EAST:
+                return NORTH;
+            case SOUTH:
+                return EAST;
+            case WEST:
+                return SOUTH;
+            default:
+                return null;
+        }
+    }
 }

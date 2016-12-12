@@ -101,8 +101,6 @@ public class Level {
         l = wrapper.getLayer(0);
         data = l.getData();
 
-        handleSpecialTiles();
-
         xx = 0;
         yy = 0;
         for (int i = 0; i < data.length; i++) {
@@ -123,10 +121,6 @@ public class Level {
         unUsedOut = new ArrayList<>(outList);
         nextLevel();
 
-    }
-
-    private void handleSpecialTiles() {
-        //TODO remove
     }
 
     private void linkTilesWithNeighours() {
@@ -248,7 +242,7 @@ public class Level {
 
             if (!hold || (hud.selected() == null || hud.selected().equals(Mover.class))) now = levelData[gridX][gridY].click();
 
-            if (latest != null && hud.selected().equals(latest.getClass())) {
+            if (latest != null && hud.selected() != null && hud.selected().equals(latest.getClass())) {
                 double dist = new Position(mouseX, mouseY).distanceToPosition(latest.getPosition());
                 if (dist < 60 && dist > 10) {
                     if (Math.abs(mouseX - latest.getX()) > Math.abs(mouseY - latest.getY())) {
@@ -333,5 +327,13 @@ public class Level {
                 }
             }
         }
+    }
+
+    public Entity getLatest() {
+        return latest;
+    }
+
+    public void resetLatest() {
+        this.latest = null;
     }
 }

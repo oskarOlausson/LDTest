@@ -26,7 +26,11 @@ public abstract class Placeable extends Entity {
     public abstract void sense(Collection<Mail> sensed,
                                Tile tile);
 
-    public Tile getGoTo(HashMap<Direction, Tile> neighbours, List<Mail> mail) {
-        return neighbours.get(direction);
+    public Tile getGoTo(Tile tile, List<Mail> mail) {
+        return tile.getNeighbours().get(direction);
+    }
+
+    public Direction getDirection(Mail mail) {
+        return direction;
     }
 }

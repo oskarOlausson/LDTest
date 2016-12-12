@@ -33,7 +33,7 @@ public class Jumper extends Placeable {
         List<Tile> list = new ArrayList<>();
         list.add(tile);
 
-        Tile target = getGoTo(tile.getNeighbours(), new ArrayList<>(sensed));
+        Tile target = getGoTo(tile, new ArrayList<>(sensed));
 
         if (target == null) {
             return;
@@ -60,7 +60,9 @@ public class Jumper extends Placeable {
     }
 
     @Override
-    public Tile getGoTo(HashMap<Direction, Tile> neighbours, List<Mail> mail) {
+    public Tile getGoTo(Tile owner, List<Mail> mail) {
+        HashMap<Direction, Tile> neighbours = owner.getNeighbours();
+
         Tile tile = neighbours.get(direction);
         if (tile == null) return null;
         if (mail.get(0).getType().equals(Type.BIG_BOX)) return tile;

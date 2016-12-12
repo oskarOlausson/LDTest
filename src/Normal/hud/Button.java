@@ -35,15 +35,15 @@ public class Button {
     }
 
     public void tick() {
+
         timer.update();
+        if (level.getPlay()) sprite.setImageIndex(1);
+        else sprite.setImageIndex(0);
     }
 
     public void click() {
-
         if (timer.isDone()) {
             level.togglePlay();
-            if (level.getPlay()) sprite.setImageIndex(1);
-            else sprite.setImageIndex(0);
         }
 
         timer.restart();

@@ -13,16 +13,15 @@ import Normal.mail.Mail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 public class Switch extends Placeable {
 
     private static final int MOVE_AMOUNT = 50;
 
+
     public Switch(int x, int y) {
         super(new Sprite("switch", 50), new Position(x, y));
-        sprite.setImageSpeed(1);
     }
 
     @Override
@@ -32,10 +31,20 @@ public class Switch extends Placeable {
         List<Tile> list = new ArrayList<>();
 
         tile.moveMaid(list, getDirection());
+    }
 
-        direction = direction.turnAround();
+    @Override
+    public Direction getDirection(Mail mail) {
+        if (mail.getInternational()) {
+            return (direction.turnCounter());
+        }
+        return direction;
+    }
 
-        sprite.update();
+
+    @Override
+    public Tile getGoTo(Tile tile, List<Mail> mail) {
+        return tile.getNeighbours().get(getDirection(mail.get(0)));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package Normal;
 
 import Normal.hud.HUD;
+import Normal.placable.Mover;
 
 import javax.swing.*;
 import java.awt.*;
@@ -73,6 +74,9 @@ public class World extends JPanel implements ActionListener, MouseListener, HUD.
             Point mouse = getMousePosition();
 
             if (mouse != null) level.leftClick((int) mouse.getX(), (int) mouse.getY(), true);
+        }
+        else if (level.getLatest() != null && !level.getLatest().getClass().equals(Mover.class)){
+            level.resetLatest();
         }
         level.tick();
     }
